@@ -1,16 +1,56 @@
-# React + Vite
+# Spy Time - React JS Clean Architecture Starter
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Boilerplate React JavaScript theo clean architecture, da setup san:
 
-Currently, two official plugins are available:
+- React Router
+- Redux Toolkit + React Redux
+- UI foundation theo phong cach shadcn (Button + `cn` utility)
+- Tailwind CSS v4
+- Alias import `@/`
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Run Project
 
-## React Compiler
+```bash
+npm install
+npm run dev
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Build production:
 
-## Expanding the ESLint configuration
+```bash
+npm run build
+npm run preview
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Folder Structure
+
+```text
+src/
+	app/
+		layouts/       # App layouts
+		providers/     # Global providers (Redux, etc.)
+		router/        # Route definitions
+		store/         # Redux store + slices
+	pages/           # Route-level pages
+	widgets/         # UI blocks (compose features/entities)
+	features/        # Use-cases and user interactions
+	entities/        # Domain entities
+	shared/
+		constants/     # Constants (routes, enums)
+		lib/           # Reusable helpers
+		ui/            # Reusable UI components
+```
+
+## What Is Ready
+
+- `MainLayout` + `HomePage` + `NotFoundPage`
+- Sample Redux slice: `appSlice`
+- Sample UI component: `Button` (variants from `class-variance-authority`)
+- Theme den/trang voi accent `#FF5722`
+
+## Next Implementation Pattern
+
+1. Tao use-case moi trong `features/`
+2. Tach state vao store slice trong `app/store/slices/`
+3. Tao page moi trong `pages/` va khai bao route trong `app/router/`
+4. Tai su dung component chung tu `shared/ui/`
