@@ -10,6 +10,7 @@ import {
   ROOM_TITLES,
   isCorrectPassword,
 } from "../../../features/time-travel-spy/lib/gameConfig";
+import { Stage1945MemoryRoom } from "../../../features/time-travel-spy/ui/Stage1945MemoryRoom";
 import { Stage1986Notebook } from "../../../features/time-travel-spy/ui/Stage1986Notebook";
 
 const initialFlashlight = {
@@ -189,36 +190,7 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
       </article>
 
       <article className={renderRoom1945 ? "space-y-4" : "hidden"}>
-        <div className="rounded-xl border border-border bg-surface p-6">
-          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-            Puzzle Area
-          </p>
-          <p className="mt-3 text-sm text-foreground/90">
-            Chiến dịch 1945 được đặt trong phòng tài liệu mật. Manh mối duy nhất
-            vẫn là năm sự kiện quan trọng. Nhập đúng mật khẩu để tiếp tục.
-          </p>
-        </div>
-
-        <form
-          className="grid gap-3 rounded-xl border border-border bg-surface p-6"
-          onSubmit={(event) => handleSubmit(event, 2)}
-        >
-          <label
-            className="text-xs uppercase tracking-[0.2em] text-muted-foreground"
-            htmlFor="room-2-password"
-          >
-            Password
-          </label>
-          <input
-            id="room-2-password"
-            className="h-11 rounded-md border border-border bg-background px-3 text-sm text-foreground outline-none transition focus:border-brand"
-            value={answers[2]}
-            onChange={(event) => updateAnswer(2, event.target.value)}
-            placeholder="Nhập mật khẩu phòng 1945"
-            autoComplete="off"
-          />
-          <Button type="submit">Xác nhận phòng 1945</Button>
-        </form>
+        <Stage1945MemoryRoom />
       </article>
 
       <article className={renderRoom1986 ? "space-y-4" : "hidden"}>

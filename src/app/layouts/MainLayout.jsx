@@ -21,7 +21,7 @@ export const MainLayout = () => {
         <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-slate-950/40 to-transparent" />
       </div>
 
-      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-8 rounded-[1.4rem] border border-border/70 bg-surface/82 p-6 shadow-[0_24px_70px_rgb(0_0_0_/_0.34)] backdrop-blur-xl md:p-10">
+      <div className="relative mx-auto flex w-full max-w-[96rem] flex-col gap-8 rounded-[1.4rem] border border-border/70 bg-surface/82 p-6 shadow-[0_24px_70px_rgb(0_0_0_/_0.34)] backdrop-blur-xl md:p-10">
         <header className="flex flex-wrap items-center justify-between gap-4 border-b border-border/80 pb-4">
           <div>
             <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
