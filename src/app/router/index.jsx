@@ -21,6 +21,8 @@ export const router = createBrowserRouter([
       {
         path: ROUTES.fragmentPuzzle,
         element: <FragmentPuzzlePage />,
+      },
+      {
         path: ROUTES.stage1930,
         element: (
           <StageGuard requiredStage={1}>
