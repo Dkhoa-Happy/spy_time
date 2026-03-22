@@ -18,21 +18,20 @@ const NOTEBOOK_PAGES = [
     dossierCode: "TS-1986-ALPHA",
     status: "Niêm phong",
     title: "Bìa hồ sơ chuyển trục 1986",
-    subtitle: "Kho lưu trữ chiến dịch",
-    lead:
-      "Hồ sơ này tổng hợp tiến trình tìm đường đổi mới của Đảng trong chặng 1975-1986 và mốc Đại hội VI tháng 12/1986. Phần bề mặt chỉ là báo cáo tóm tắt, các lớp mực ẩn mới giữ lại tín hiệu quyết định.",
+    subtitle: "Nhật ký thu hồi từ kho lưu trữ chiến dịch",
+    lead: "Nếu cậu đã mở được tập này, nghĩa là tôi không còn ở kho C-6 nữa. Tôi gom các dấu vết quanh chặng 1975-1986 và mốc Đại hội VI tháng 12/1986 vào đây. Phần chữ hiện ra chỉ để dẫn đường, còn tín hiệu quan trọng nằm dưới lớp mực ẩn.",
     body: [
-      "Giáo trình xác định những năm 1975-1986 là giai đoạn Đảng từng bước đổi mới tư duy, đổi mới cơ chế, chính sách và khảo nghiệm thực tiễn để tìm con đường đổi mới đất nước.",
-      "Nhiệm vụ của điệp viên: soi rõ các manh mối ẩn, xác định mốc Đại hội VI, rồi ghép mật lệnh cuối theo quy tắc ở trang xác minh.",
+      "Sau 1975, mọi thứ không đổi hướng ngay lập tức. Tôi lần lại những bản ghi cũ và thấy suốt nhiều năm, Đảng phải vừa sửa cách nghĩ, vừa thử cơ chế, chính sách, vừa dò đường từ thực tế để tìm lối ra cho đất nước.",
+      "Đừng đọc lướt. Muốn mở được khóa cuối, cậu phải nhặt đủ mốc đại hội, thời điểm quyết định và cụm từ then chốt mà người đi trước đã giấu rải trong hồ sơ.",
     ],
     facts: [
-      "Lưu trữ: Phòng C-6",
-      "Truy cập: Điệp viên cấp S",
-      "Trọng tâm: Đại hội VI và đường lối đổi mới",
+      "Thu hồi tại: Phòng C-6",
+      "Quyền mở: Điệp viên cấp S",
+      "Dấu vết chính: Đại hội VI, đường lối đổi mới",
     ],
     summaryTags: ["1975-1986", "Đại hội VI", "Đổi mới toàn diện"],
     footerNote:
-      "Bút đỏ ở mép giấy đánh dấu đây là hồ sơ chuyển trục, không phải báo cáo sự vụ thông thường.",
+      "Vệt bút đỏ ở mép giấy báo đây là hồ sơ bước ngoặt, không phải loại biên bản cất cho đủ thủ tục.",
   },
   {
     id: 2,
@@ -40,21 +39,20 @@ const NOTEBOOK_PAGES = [
     dossierCode: "TS-1986-BETA",
     status: "Tiền đề đổi mới",
     title: "Bản ghi giai đoạn khảo nghiệm",
-    subtitle: "Tư liệu tiền đại hội",
-    lead:
-      "Theo giáo trình, giai đoạn 1975-1986 là quá trình từng bước đổi mới tư duy, đổi mới cơ chế, chính sách và khảo nghiệm thực tiễn để tìm con đường đổi mới đất nước.",
+    subtitle: "Trích nhật ký điệp vụ tiền đại hội",
+    lead: "Tôi đọc lại các mảnh ghi chép rời từ giai đoạn 1975-1986 và càng chắc một điều: không có cú bẻ lái nào đến trong một đêm. Nó tích lại từ những lần thử, những lần vấp và những bản tổng kết được viết ra sau khi đụng thực tế.",
     body: [
-      "Đường lối đổi mới không xuất hiện đột ngột. Nó hình thành sau một chặng dài tổng kết thực tiễn, nhận diện những giới hạn của cơ chế kế hoạch hóa tập trung, quản lý hành chính và bao cấp.",
-      "Từ các khảo nghiệm đó, hồ sơ nhấn mạnh phải khắc phục lối tư duy chủ quan, duy ý chí, giáo điều, nóng vội và chuyển sang tôn trọng quy luật khách quan của đời sống kinh tế - xã hội.",
+      "Dấu vết chỉ ra rất rõ: đường lối đổi mới không rơi xuống từ khoảng không. Nó được kéo ra từ một quãng dài nhìn thẳng vào chỗ tắc của cơ chế kế hoạch hóa tập trung, kiểu quản lý nặng mệnh lệnh và thói quen bao cấp.",
+      "Người viết trước tôi còn gạch đậm một ý: nếu cứ bám vào lối nghĩ chủ quan, nóng vội và giáo điều thì sớm muộn cũng tự khóa mình. Muốn mở đường, phải chịu nhìn vào đời sống thật và tôn trọng quy luật của nó.",
     ],
     facts: [
-      "Mốc nền: 1975-1986",
-      "Khâu quyết định: Khảo nghiệm thực tiễn",
-      "Lối cũ cần vượt qua: Tập trung, bao cấp",
+      "Mốc dò dấu: 1975-1986",
+      "Chìa khóa: Thử rồi tổng kết từ thực tế",
+      "Nút thắt cũ: Tập trung, bao cấp",
     ],
     summaryTags: ["Khảo nghiệm", "Bao cấp", "Quy luật khách quan"],
     footerNote:
-      "Mé trái trang còn vết ghim cũ, cho thấy từng có phụ lục tổng kết sai lầm tư duy bị rút khỏi hồ sơ.",
+      "Mé trái còn lỗ ghim cũ. Có vẻ từng có một tờ phụ lục liệt kê những lối nghĩ sai bị ai đó rút đi trước khi niêm phong.",
     uvClues: [
       { text: "12/1986", tone: "cyan", position: "top-left" },
       {
@@ -70,21 +68,20 @@ const NOTEBOOK_PAGES = [
     dossierCode: "TS-1986-GAMMA",
     status: "Điểm bẻ lái",
     title: "Điện mật Đại hội VI",
-    subtitle: "Bản ghi tổng hợp",
-    lead:
-      "Giáo trình xác định rõ: tại Đại hội VI của Đảng, tháng 12/1986, đường lối đổi mới được hoạch định toàn diện chứ không chỉ sửa kỹ thuật ở một lĩnh vực đơn lẻ.",
+    subtitle: "Bản ghi điệp vụ đã xác thực",
+    lead: "Đây là trang tôi đánh dấu bằng mực đậm nhất. Đến Đại hội VI của Đảng, tháng 12/1986, những tín hiệu rời rạc mới chụm lại thành một quyết định rõ ràng: phải đổi mới thật sự, không thể chỉ vá víu từng mảng nữa.",
     body: [
-      "Báo cáo lưu ý phạm vi đổi mới trải trên cả cơ chế, chính sách kinh tế, hệ thống chính trị, chính sách xã hội, văn hóa, quốc phòng, an ninh và đối ngoại.",
-      "Đây cũng là kết quả của quá trình tổng kết, tìm tòi, khảo nghiệm thực tiễn và dựa trên sáng kiến, nguyện vọng, lợi ích của các tầng lớp nhân dân.",
+      "Điều được chốt lại không chỉ nằm ở chuyện làm ăn hay điều hành kinh tế. Dấu bút chạy xuyên cả hệ thống chính trị, chính sách xã hội, văn hóa, quốc phòng, an ninh và đối ngoại.",
+      "Tôi tin đây là điểm bẻ lái vì nó không sinh ra trên bàn giấy. Nó đi lên từ quá trình tổng kết, tìm tòi, khảo nghiệm thực tiễn, rồi gom lại từ sáng kiến, nguyện vọng và lợi ích của người dân.",
     ],
     facts: [
-      "Sự kiện: Đại hội VI của Đảng",
-      "Thời điểm: 12/1986",
-      "Ý nghĩa: Khởi xướng đường lối đổi mới toàn diện",
+      "Sự kiện khóa: Đại hội VI của Đảng",
+      "Dấu thời gian: 12/1986",
+      "Kết luận: Mở ra đường lối đổi mới toàn diện",
     ],
     summaryTags: ["Đại hội VI", "Toàn diện", "Đường lối mới"],
     footerNote:
-      "Nét bút xanh dưới chân trang là ký hiệu xác nhận: đây là cột mốc mở đầu công cuộc đổi mới.",
+      "Nét bút xanh sát chân trang là dấu xác nhận cuối. Người để lại hồ sơ muốn nhắc: từ đây cuộc chơi đổi khác hẳn.",
     uvClues: [
       { text: "ĐẠI HỘI VI", tone: "violet", position: "top-center" },
       {
@@ -100,25 +97,40 @@ const NOTEBOOK_PAGES = [
     dossierCode: "TS-1986-OMEGA",
     status: "Chuẩn xác nhận",
     title: "Trang xác minh mật lệnh",
-    subtitle: "Niêm phong tác vụ",
+    subtitle: "Niêm phong tác vụ của điệp vụ trước",
     objective:
-      "Từ các manh mối đã soi được, hãy ghép mật lệnh theo đúng cấu trúc suy luận thay vì nhập nguyên một cụm lịch sử có sẵn.",
+      "Tôi để lại đủ manh mối rồi. Nếu đọc kỹ các trang trước, cậu sẽ ghép được mật lệnh mà không cần chép nguyên một dòng lịch sử khô khan.",
     facts: [
-      "Lấy số La Mã của đại hội then chốt.",
-      "Nối tiếp bằng tháng và năm hoạch định đường lối.",
-      "Kết bằng chữ cái đầu của cụm từ then chốt: Đổi mới toàn diện.",
+      "Lấy số La Mã của kỳ đại hội quyết định.",
+      "Nối tiếp bằng tháng và năm ở thời điểm chốt hướng đi.",
+      "Khóa lại bằng chữ cái đầu của cụm từ: Đổi mới toàn diện.",
     ],
     summaryTags: ["Đại hội VI", "12/1986", "Đổi mới toàn diện"],
     footerNote:
-      "Bỏ dấu, bỏ ký tự ngăn cách nếu muốn. Chỉ khi ghép đủ ba lớp manh mối thì hồ sơ mới mở khóa.",
+      "Có thể nhập có hoặc không có dấu gạch nối. Bỏ dấu cũng được, nhưng ghép thiếu một lớp là khóa vẫn im.",
   },
 ];
+
+const normalizeClue = (value) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D")
+    .toLowerCase();
+
+const CLUE_TO_SUMMARY_TAG = {
+  [normalizeClue("12/1986")]: "12/1986",
+  [normalizeClue("ĐẠI HỘI VI")]: "Đại hội VI",
+  [normalizeClue("ĐỔI MỚI TOÀN DIỆN")]: "Đổi mới toàn diện",
+};
 
 const NotebookSheet = ({
   page,
   answer,
   onAnswerChange,
   onSubmit,
+  revealedSummaryTags,
   interactive,
   isUvEnabled,
   flashlight,
@@ -131,6 +143,10 @@ const NotebookSheet = ({
   onTouchEnd,
 }) => {
   const hasUvLayer = Boolean(page.uvClues?.length);
+  const visibleSummaryTags =
+    page.id === 4
+      ? page.summaryTags.filter((tag) => revealedSummaryTags.has(tag))
+      : page.summaryTags;
 
   return (
     <article
@@ -157,7 +173,9 @@ const NotebookSheet = ({
         </div>
         <div className="spy-dossier-sheet__meta">
           <span className="spy-dossier-sheet__status">{page.status}</span>
-          <span className="spy-dossier-sheet__number">Trang {page.pageNumber}</span>
+          <span className="spy-dossier-sheet__number">
+            Trang {page.pageNumber}
+          </span>
         </div>
       </div>
 
@@ -206,14 +224,23 @@ const NotebookSheet = ({
           <div className="spy-dossier-final__panel">
             <p className="spy-dossier-sheet__eyebrow">Mảnh ghép bắt buộc</p>
             <div className="spy-dossier-sheet__tags spy-dossier-sheet__tags--final">
-              {page.summaryTags.map((tag) => (
+              {visibleSummaryTags.map((tag) => (
                 <span key={tag}>{tag}</span>
               ))}
             </div>
+            {visibleSummaryTags.length === 0 && (
+              <p className="spy-dossier-final__hint">
+                Chưa phát hiện mảnh ghép nào. Soi UV ở các trang trước để thu
+                thập từ khóa ẩn.
+              </p>
+            )}
           </div>
 
           <div className="spy-dossier-final__panel">
-            <label htmlFor="room-3-password" className="spy-dossier-final__label">
+            <label
+              htmlFor="room-3-password"
+              className="spy-dossier-final__label"
+            >
               Mật lệnh cuối
             </label>
             <input
@@ -232,7 +259,10 @@ const NotebookSheet = ({
       )}
 
       {page.id === 4 && !interactive && (
-        <div className="spy-dossier-final spy-dossier-final--preview" aria-hidden>
+        <div
+          className="spy-dossier-final spy-dossier-final--preview"
+          aria-hidden
+        >
           <div className="spy-dossier-final__panel">
             <p className="spy-dossier-sheet__eyebrow">Quy tắc ghép mật lệnh</p>
             <ul className="spy-dossier-sheet__facts">
@@ -244,10 +274,16 @@ const NotebookSheet = ({
           <div className="spy-dossier-final__panel">
             <p className="spy-dossier-sheet__eyebrow">Mảnh ghép bắt buộc</p>
             <div className="spy-dossier-sheet__tags spy-dossier-sheet__tags--final">
-              {page.summaryTags.map((tag) => (
+              {visibleSummaryTags.map((tag) => (
                 <span key={tag}>{tag}</span>
               ))}
             </div>
+            {visibleSummaryTags.length === 0 && (
+              <p className="spy-dossier-final__hint">
+                Chưa phát hiện mảnh ghép nào. Soi UV ở các trang trước để thu
+                thập từ khóa ẩn.
+              </p>
+            )}
           </div>
           <div className="spy-dossier-final__panel">
             <p className="spy-dossier-final__label">Mật lệnh cuối</p>
@@ -314,6 +350,9 @@ export const Stage1986Notebook = ({
 }) => {
   const [pageIndex, setPageIndex] = useState(0);
   const [flipState, setFlipState] = useState(null);
+  const [revealedSummaryTags, setRevealedSummaryTags] = useState(
+    () => new Set(),
+  );
   const shellRef = useRef(null);
   const flipSheetRef = useRef(null);
   const pageShadowRef = useRef(null);
@@ -321,6 +360,41 @@ export const Stage1986Notebook = ({
 
   const activePage = NOTEBOOK_PAGES[pageIndex];
   const targetPage = flipState ? NOTEBOOK_PAGES[flipState.to] : activePage;
+
+  const revealUvClues = () => {
+    if (!isUvEnabled || !activePage.uvClues?.length) {
+      return;
+    }
+
+    const discoveredTags = activePage.uvClues
+      .map((clue) => CLUE_TO_SUMMARY_TAG[normalizeClue(clue.text)])
+      .filter(Boolean);
+
+    if (discoveredTags.length === 0) {
+      return;
+    }
+
+    setRevealedSummaryTags((previous) => {
+      const next = new Set(previous);
+      discoveredTags.forEach((tag) => next.add(tag));
+      return next;
+    });
+  };
+
+  const handleMouseMove = (event) => {
+    onMouseMove?.(event);
+    revealUvClues();
+  };
+
+  const handleTouchStart = (event) => {
+    onTouchStart?.(event);
+    revealUvClues();
+  };
+
+  const handleTouchMove = (event) => {
+    onTouchMove?.(event);
+    revealUvClues();
+  };
 
   const turnPage = (nextDirection) => {
     if (flipState) {
@@ -435,10 +509,14 @@ export const Stage1986Notebook = ({
     Boolean(flipState) || pageIndex === NOTEBOOK_PAGES.length - 1;
 
   const flipFrontPage = flipState
-    ? NOTEBOOK_PAGES[flipState.direction === "next" ? flipState.from : flipState.to]
+    ? NOTEBOOK_PAGES[
+        flipState.direction === "next" ? flipState.from : flipState.to
+      ]
     : activePage;
   const flipBackPage = flipState
-    ? NOTEBOOK_PAGES[flipState.direction === "next" ? flipState.to : flipState.from]
+    ? NOTEBOOK_PAGES[
+        flipState.direction === "next" ? flipState.to : flipState.from
+      ]
     : activePage;
 
   return (
@@ -447,20 +525,18 @@ export const Stage1986Notebook = ({
         <div className="spy-dossier__cluster">
           <span className="spy-dossier__badge">
             <FileLock2 className="size-4" />
-            Hồ sơ tối mật
+            Nhật ký điệp vụ thu hồi
           </span>
           <span className="spy-dossier__badge spy-dossier__badge--muted">
             <ShieldCheck className="size-4" />
-            Xác thực trực tiếp tại bàn
+            Dấu xác thực của điệp vụ trước
           </span>
         </div>
 
         <button
           type="button"
           onClick={onToggleUv}
-          className={`spy-dossier__uvToggle ${
-            isUvEnabled ? "is-active" : ""
-          }`}
+          className={`spy-dossier__uvToggle ${isUvEnabled ? "is-active" : ""}`}
           aria-label={isUvEnabled ? "Tắt đèn UV" : "Bật đèn UV"}
           title={isUvEnabled ? "Tắt đèn UV" : "Bật đèn UV"}
         >
@@ -472,12 +548,14 @@ export const Stage1986Notebook = ({
       <div className="spy-dossier__brief">
         <div>
           <p className="spy-dossier__eyebrow">Bàn phân tích 1986</p>
-          <h3 className="spy-dossier__heading">Notebook puzzle đã được dựng lại như một hồ sơ mật thật</h3>
+          <p className="spy-dossier__note">
+            Ghi chú để lại bởi một điệp vụ tiền nhiệm.
+          </p>
         </div>
         <div className="spy-dossier__briefMeta">
           <span>
             <ScanSearch className="size-4" />
-            Rê đèn UV để soi mực ẩn
+            Bật UV khi cần để soi lớp mực ẩn
           </span>
           <span>
             <ChevronRight className="size-4" />
@@ -490,24 +568,35 @@ export const Stage1986Notebook = ({
         <div className="spy-dossier__deskGlow" ref={deskGlowRef} aria-hidden />
         <div className="spy-dossier__shell" ref={shellRef}>
           <div className="spy-dossier__spine" aria-hidden />
-          <div className="spy-dossier__stack spy-dossier__stack--left" aria-hidden />
-          <div className="spy-dossier__stack spy-dossier__stack--right" aria-hidden />
-          <div className="spy-dossier__pageShadow" ref={pageShadowRef} aria-hidden />
+          <div
+            className="spy-dossier__stack spy-dossier__stack--left"
+            aria-hidden
+          />
+          <div
+            className="spy-dossier__stack spy-dossier__stack--right"
+            aria-hidden
+          />
+          <div
+            className="spy-dossier__pageShadow"
+            ref={pageShadowRef}
+            aria-hidden
+          />
 
           <NotebookSheet
             page={targetPage}
             answer={answer}
             onAnswerChange={onAnswerChange}
             onSubmit={onSubmit}
+            revealedSummaryTags={revealedSummaryTags}
             interactive={!flipState}
             isUvEnabled={isUvEnabled}
             flashlight={flashlight}
             hiddenMask={hiddenMask}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
-            onMouseMove={onMouseMove}
-            onTouchStart={onTouchStart}
-            onTouchMove={onTouchMove}
+            onMouseMove={handleMouseMove}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
             onTouchEnd={onTouchEnd}
           />
 
@@ -518,10 +607,18 @@ export const Stage1986Notebook = ({
               aria-hidden
             >
               <div className="spy-dossier-flipSheet__face spy-dossier-flipSheet__face--front">
-                <NotebookSheet page={flipFrontPage} interactive={false} />
+                <NotebookSheet
+                  page={flipFrontPage}
+                  revealedSummaryTags={revealedSummaryTags}
+                  interactive={false}
+                />
               </div>
               <div className="spy-dossier-flipSheet__face spy-dossier-flipSheet__face--back">
-                <NotebookSheet page={flipBackPage} interactive={false} />
+                <NotebookSheet
+                  page={flipBackPage}
+                  revealedSummaryTags={revealedSummaryTags}
+                  interactive={false}
+                />
               </div>
             </div>
           )}
@@ -529,14 +626,24 @@ export const Stage1986Notebook = ({
       </div>
 
       <div className="spy-dossier__controls">
-        <Button variant="secondary" size="sm" onClick={() => turnPage("prev")} disabled={prevDisabled}>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => turnPage("prev")}
+          disabled={prevDisabled}
+        >
           <ChevronLeft className="size-4" />
           Trang trước
         </Button>
         <p className="spy-dossier__pager">
           Tờ {pageIndex + 1}/{NOTEBOOK_PAGES.length}
         </p>
-        <Button variant="secondary" size="sm" onClick={() => turnPage("next")} disabled={nextDisabled}>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => turnPage("next")}
+          disabled={nextDisabled}
+        >
           Trang sau
           <ChevronRight className="size-4" />
         </Button>

@@ -62,7 +62,7 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
     message: "",
   });
   const [flashlight, setFlashlight] = useState(initialFlashlight);
-  const [isUvEnabled, setIsUvEnabled] = useState(true);
+  const [isUvEnabled, setIsUvEnabled] = useState(false);
 
   const hiddenMask = useMemo(() => {
     if (!flashlight.active || !isUvEnabled) {

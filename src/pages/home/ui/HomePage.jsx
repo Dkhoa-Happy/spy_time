@@ -1,8 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Compass, RefreshCw } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import {
+  completeStage,
   incrementMissionCounter,
   resetMissionCounter,
 } from "../../../app/store/slices/appSlice";
@@ -11,9 +12,16 @@ import { ROUTES } from "../../../shared/constants/routes";
 
 export const HomePage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { projectName, missionCounter, game } = useSelector(
     (state) => state.app,
   );
+
+  const unlockToStageThreeForTesting = () => {
+    dispatch(completeStage(1));
+    dispatch(completeStage(2));
+    navigate(ROUTES.stage1986);
+  };
 
   return (
     <section className="grid gap-6 md:grid-cols-[1.4fr_1fr]">
@@ -46,6 +54,9 @@ export const HomePage = () => {
           >
             <RefreshCw className="size-4" />
             Đặt lại bộ đếm
+          </Button>
+          <Button variant="secondary" onClick={unlockToStageThreeForTesting}>
+            Mở nhanh Stage 3 (test)
           </Button>
         </div>
       </article>
