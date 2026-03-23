@@ -8,6 +8,10 @@ export const STAGE_1945_MILESTONES = [
     dateLabel: "13/8/1945",
     infoText:
       "Ngày 13/8/1945, Trung ương Đảng phát lệnh Tổng khởi nghĩa trong cả nước (Quân lệnh số 1).",
+    infoTextParts: [
+      "Ngày 13/8/1945, Trung ương Đảng phát lệnh Tổng khởi nghĩa trong cả nước (",
+      ").",
+    ],
     placeholderVariant: "dispatch",
     imageSlot: "ARCHIVE ALPHA",
     imageSrc: publicImage("quan-lenh-so-1.jpg"),
@@ -20,6 +24,7 @@ export const STAGE_1945_MILESTONES = [
       signal: "--.- ..- .- -. / .-.. . -. .... / ... --- / -- --- -",
       acceptedAnswers: ["QUAN LENH SO MOT", "QUAN LENH SO 1"],
       solvedKeyword: "QUAN LENH SO MOT",
+      keywordLabel: "Quân lệnh số 1",
       revealTags: ["13/8/1945", "Tổng khởi nghĩa"],
       successMessage:
         "Tín hiệu đầu tiên đã được giải mã. Mật lệnh khởi nghĩa toàn quốc đã lộ diện.",
@@ -29,9 +34,9 @@ export const STAGE_1945_MILESTONES = [
     id: "nhat-dau-hang",
     order: 2,
     title: "Nhật đầu hàng - thời cơ",
-    dateLabel: "15/8/1945",
+    dateLabel: "14/8/1945",
     infoText:
-      "Ngày 15/8/1945, Nhật đầu hàng Đồng minh, tạo thời cơ cho cách mạng Việt Nam.",
+      "Ngày 14-8-1945, Nhật Bản chấp nhận đầu hàng Đồng minh.",
     placeholderVariant: "opportunity",
     imageSlot: "ARCHIVE BETA",
     imageSrc: publicImage("Mamoru Shigemitsu Surrender 1945.jpg"),
@@ -67,6 +72,10 @@ export const STAGE_1945_MILESTONES = [
     dateLabel: "30/8/1945",
     infoText:
       "30/8/1945, vua Bảo Đại thoái vị tại Ngọ Môn, trao ấn và kiếm cho Chính phủ lâm thời.",
+    infoTextParts: [
+      "30/8/1945, vua Bảo Đại thoái vị tại ",
+      ", trao ấn và kiếm cho Chính phủ lâm thời.",
+    ],
     placeholderVariant: "abdication",
     imageSlot: "ARCHIVE OMEGA",
     imageSrc: publicImage("vua-bao-dai-thoai-vi.jpg"),
@@ -79,6 +88,7 @@ export const STAGE_1945_MILESTONES = [
       signal: "-. --. --- / -- --- -.",
       acceptedAnswers: ["NGO MON"],
       solvedKeyword: "NGO MON",
+      keywordLabel: "Ngọ Môn",
       revealTags: ["Huế", "Thoái vị"],
       successMessage:
         "Từ khóa địa điểm đã khớp. Hồ sơ thoái vị ở Huế đã được xác minh.",
@@ -87,10 +97,14 @@ export const STAGE_1945_MILESTONES = [
   {
     id: "tuyen-ngon-doc-lap",
     order: 6,
-    title: "Tuyên ngôn độc lập",
+    title: "Tuyên ngôn",
     dateLabel: "2/9/1945",
     infoText:
       "Ngày 2/9/1945, Chủ tịch Hồ Chí Minh đọc Tuyên ngôn độc lập, khai sinh nước Việt Nam Dân chủ Cộng hòa.",
+    infoTextParts: [
+      "Ngày 2/9/1945, Chủ tịch Hồ Chí Minh đọc Tuyên ngôn ",
+      ", khai sinh nước Việt Nam Dân chủ Cộng hòa.",
+    ],
     placeholderVariant: "proclamation",
     imageSlot: "ARCHIVE SIGMA",
     imageSrc: publicImage("bac ho doc ban tuyen ngôn độc lập.jpeg"),
@@ -103,6 +117,7 @@ export const STAGE_1945_MILESTONES = [
       signal: "-.. --- -.-. / .-.. .- .--.",
       acceptedAnswers: ["DOC LAP"],
       solvedKeyword: "DOC LAP",
+      keywordLabel: "Độc lập",
       revealTags: ["2/9/1945", "Màn cuối"],
       successMessage:
         "Mật thư cuối đã mở. Từ khóa biểu tượng của ngày độc lập đã được xác nhận.",

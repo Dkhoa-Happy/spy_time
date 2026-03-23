@@ -5,6 +5,7 @@ import { HomePage } from "../../pages/home/ui/HomePage";
 import { NotFoundPage } from "../../pages/not-found/ui/NotFoundPage";
 import FragmentPuzzlePage from "../../pages/fragment-puzzle/ui/FragmentPuzzlePage";
 import { TimeTravelSpyPage } from "../../pages/time-travel-spy/ui/TimeTravelSpyPage";
+import { Stage1986PrepMapPage } from "../../pages/time-travel-spy-prep/ui/Stage1986PrepMapPage";
 import { MissionAccomplishedPage } from "../../pages/mission-accomplished/ui/MissionAccomplishedPage";
 import { ROUTES } from "../../shared/constants/routes";
 import { StageGuard } from "./StageGuard";
@@ -35,6 +36,14 @@ export const router = createBrowserRouter([
         element: (
           <StageGuard requiredStage={3}>
             <TimeTravelSpyPage activeStage={3} />
+          </StageGuard>
+        ),
+      },
+      {
+        path: ROUTES.stage1986Prep,
+        element: (
+          <StageGuard requiredStage={3}>
+            <Stage1986PrepMapPage />
           </StageGuard>
         ),
       },

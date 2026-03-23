@@ -27,7 +27,7 @@ export const MainLayout = () => {
             <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
               Coordinator Console
             </p>
-            <h1 className="tracking-tighter text-3xl font-bold text-foreground">
+            <h1 className="tracking-tighter text-3xl 6font-bold text-foreground">
               Spy Time Control Room
             </h1>
           </div>

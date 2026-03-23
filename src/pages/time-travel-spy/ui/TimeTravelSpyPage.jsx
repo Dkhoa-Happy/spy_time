@@ -6,7 +6,6 @@ import { completeStage } from "../../../app/store/slices/appSlice";
 import { ROUTES } from "../../../shared/constants/routes";
 import { Button } from "../../../shared/ui/button";
 import {
-  ROOM_ROUTES,
   ROOM_TITLES,
   isCorrectPassword,
 } from "../../../features/time-travel-spy/lib/gameConfig";
@@ -21,14 +20,29 @@ const initialFlashlight = {
 
 const getNextRoute = (stage) => {
   if (stage === 1) {
-    return ROUTES.fragmentPuzzle;
+    return ROUTES.stage1945;
+  }
+  if (stage === 2) {
+    return ROUTES.stage1986Prep;
   }
 
-  if (stage === 2) {
-    return ROOM_ROUTES[3];
+  if (stage === 3) {
+    return ROUTES.missionComplete;
   }
 
   return ROUTES.missionComplete;
+};
+
+const getPreviousRoute = (stage) => {
+  if (stage === 3) {
+    return ROUTES.stage1986Prep;
+  }
+
+  if (stage === 2) {
+    return ROUTES.stage1930;
+  }
+
+  return ROUTES.home;
 };
 
 const getLockedMessage = (stage) => {
@@ -50,7 +64,13 @@ const getIncorrectMessage = (stage) => {
 export const TimeTravelSpyPage = ({ activeStage }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { unlockedStage } = useSelector((state) => state.app.game);
+  const gameState = useSelector((state) => state.app.game);
+  const unlockedStage = gameState?.unlockedStage ?? 1;
+  const stage3PrepCompleted = Boolean(gameState?.stage3PrepCompleted);
+  const inventory = gameState?.inventory ?? {
+    uvLight: false,
+    fieldNotebook: false,
+  };
 
   const [answers, setAnswers] = useState({
     1: "",
@@ -62,7 +82,7 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
     message: "",
   });
   const [flashlight, setFlashlight] = useState(initialFlashlight);
-  const [isUvEnabled, setIsUvEnabled] = useState(true);
+  const [isUvEnabled, setIsUvEnabled] = useState(false);
 
   const hiddenMask = useMemo(() => {
     if (!flashlight.active || !isUvEnabled) {
@@ -129,20 +149,38 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
   const renderRoom1930 = activeStage === 1;
   const renderRoom1945 = activeStage === 2;
   const renderRoom1986 = activeStage === 3;
+  const canAccessStage1986Tools =
+    stage3PrepCompleted && inventory.uvLight && inventory.fieldNotebook;
+  const showPageHeader = !renderRoom1945;
+
+  const handleBackToPreviousStage = () => {
+    navigate(getPreviousRoute(activeStage));
+  };
 
   return (
     <section className="space-y-5">
-      <header className="rounded-xl border border-border bg-surface p-5">
-        <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
-          Time-traveling Spy
-        </p>
-        <h2 className="mt-2 tracking-tighter text-3xl font-bold text-foreground">
-          {ROOM_TITLES[activeStage]}
-        </h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Giải mật mã đúng thứ tự để giữ nguyên dòng thời gian lịch sử.
-        </p>
-      </header>
+      {showPageHeader && (
+        <header className="rounded-xl border border-border bg-surface p-5">
+          <div className="mb-4 flex justify-start">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={handleBackToPreviousStage}
+            >
+              Quay lại màn trước
+            </Button>
+          </div>
+          <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
+            Time-traveling Spy
+          </p>
+          <h2 className="mt-2 tracking-tighter text-3xl font-bold text-foreground">
+            {ROOM_TITLES[activeStage]}
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Giải mật mã đúng thứ tự để giữ nguyên dòng thời gian lịch sử.
+          </p>
+        </header>
+      )}
 
       {isNotificationVisible && (
         <p
@@ -190,7 +228,11 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
       </article>
 
       <article className={renderRoom1945 ? "space-y-4" : "hidden"}>
-        <Stage1945MemoryRoom />
+        <Stage1945MemoryRoom
+          stageTitle={ROOM_TITLES[activeStage]}
+          stageDescription="Giải mật mã đúng thứ tự để giữ nguyên dòng thời gian lịch sử."
+          onBack={handleBackToPreviousStage}
+        />
       </article>
 
       <article className={renderRoom1986 ? "space-y-4" : "hidden"}>
@@ -199,51 +241,73 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
             Puzzle Area: Archived Field Dossier
           </p>
 
-          <Stage1986Notebook
-            answer={answers[3]}
-            onAnswerChange={(value) => updateAnswer(3, value)}
-            onSubmit={(event) => handleSubmit(event, 3)}
-            isUvEnabled={isUvEnabled}
-            onToggleUv={() => setIsUvEnabled((prev) => !prev)}
-            flashlight={flashlight}
-            hiddenMask={hiddenMask}
-            onMouseEnter={() =>
-              setFlashlight((prev) => ({ ...prev, active: true }))
-            }
-            onMouseLeave={() => setFlashlight(initialFlashlight)}
-            onMouseMove={(event) =>
-              updateFlashlightFromPoint(
-                event.clientX,
-                event.clientY,
-                event.currentTarget,
-              )
-            }
-            onTouchStart={(event) => {
-              const touch = event.touches[0];
-              if (!touch) {
-                return;
-              }
+          {!canAccessStage1986Tools && (
+            <div className="mt-4 grid gap-3 rounded-xl border border-brand/35 bg-brand/10 p-4 text-sm text-orange-100">
+              <p className="font-semibold tracking-tight">
+                Màn 3 đang khóa công cụ hỗ trợ.
+              </p>
+              <p>
+                Bạn cần hoàn tất màn bản đồ chuẩn bị để tìm đèn UV và cuốn nhật
+                ký trước khi mở hồ sơ 1986.
+              </p>
+              <div>
+                <Button
+                  type="button"
+                  onClick={() => navigate(ROUTES.stage1986Prep)}
+                >
+                  Đi đến màn bản đồ chuẩn bị
+                </Button>
+              </div>
+            </div>
+          )}
 
-              updateFlashlightFromPoint(
-                touch.clientX,
-                touch.clientY,
-                event.currentTarget,
-              );
-            }}
-            onTouchMove={(event) => {
-              const touch = event.touches[0];
-              if (!touch) {
-                return;
+          {canAccessStage1986Tools && (
+            <Stage1986Notebook
+              answer={answers[3]}
+              onAnswerChange={(value) => updateAnswer(3, value)}
+              onSubmit={(event) => handleSubmit(event, 3)}
+              isUvEnabled={isUvEnabled}
+              onToggleUv={() => setIsUvEnabled((prev) => !prev)}
+              flashlight={flashlight}
+              hiddenMask={hiddenMask}
+              onMouseEnter={() =>
+                setFlashlight((prev) => ({ ...prev, active: true }))
               }
+              onMouseLeave={() => setFlashlight(initialFlashlight)}
+              onMouseMove={(event) =>
+                updateFlashlightFromPoint(
+                  event.clientX,
+                  event.clientY,
+                  event.currentTarget,
+                )
+              }
+              onTouchStart={(event) => {
+                const touch = event.touches[0];
+                if (!touch) {
+                  return;
+                }
 
-              updateFlashlightFromPoint(
-                touch.clientX,
-                touch.clientY,
-                event.currentTarget,
-              );
-            }}
-            onTouchEnd={() => setFlashlight(initialFlashlight)}
-          />
+                updateFlashlightFromPoint(
+                  touch.clientX,
+                  touch.clientY,
+                  event.currentTarget,
+                );
+              }}
+              onTouchMove={(event) => {
+                const touch = event.touches[0];
+                if (!touch) {
+                  return;
+                }
+
+                updateFlashlightFromPoint(
+                  touch.clientX,
+                  touch.clientY,
+                  event.currentTarget,
+                );
+              }}
+              onTouchEnd={() => setFlashlight(initialFlashlight)}
+            />
+          )}
         </div>
       </article>
     </section>
