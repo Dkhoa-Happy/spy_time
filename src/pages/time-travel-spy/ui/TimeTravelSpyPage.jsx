@@ -143,6 +143,7 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
   const renderRoom1930 = activeStage === 1;
   const renderRoom1945 = activeStage === 2;
   const renderRoom1986 = activeStage === 3;
+  const showPageHeader = !renderRoom1945;
 
   const handleBackToPreviousStage = () => {
     navigate(getPreviousRoute(activeStage));
@@ -150,26 +151,28 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
 
   return (
     <section className="space-y-5">
-      <header className="rounded-xl border border-border bg-surface p-5">
-        <div className="mb-4 flex justify-start">
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={handleBackToPreviousStage}
-          >
-            Quay lại màn trước
-          </Button>
-        </div>
-        <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
-          Time-traveling Spy
-        </p>
-        <h2 className="mt-2 tracking-tighter text-3xl font-bold text-foreground">
-          {ROOM_TITLES[activeStage]}
-        </h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Giải mật mã đúng thứ tự để giữ nguyên dòng thời gian lịch sử.
-        </p>
-      </header>
+      {showPageHeader && (
+        <header className="rounded-xl border border-border bg-surface p-5">
+          <div className="mb-4 flex justify-start">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={handleBackToPreviousStage}
+            >
+              Quay lại màn trước
+            </Button>
+          </div>
+          <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
+            Time-traveling Spy
+          </p>
+          <h2 className="mt-2 tracking-tighter text-3xl font-bold text-foreground">
+            {ROOM_TITLES[activeStage]}
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Giải mật mã đúng thứ tự để giữ nguyên dòng thời gian lịch sử.
+          </p>
+        </header>
+      )}
 
       {isNotificationVisible && (
         <p
@@ -217,7 +220,11 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
       </article>
 
       <article className={renderRoom1945 ? "space-y-4" : "hidden"}>
-        <Stage1945MemoryRoom />
+        <Stage1945MemoryRoom
+          stageTitle={ROOM_TITLES[activeStage]}
+          stageDescription="Giải mật mã đúng thứ tự để giữ nguyên dòng thời gian lịch sử."
+          onBack={handleBackToPreviousStage}
+        />
       </article>
 
       <article className={renderRoom1986 ? "space-y-4" : "hidden"}>
