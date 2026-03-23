@@ -19,16 +19,8 @@ export const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: ROUTES.fragmentPuzzle,
-        element: <FragmentPuzzlePage />,
-      },
-      {
         path: ROUTES.stage1930,
-        element: (
-          <StageGuard requiredStage={1}>
-            <TimeTravelSpyPage activeStage={1} />
-          </StageGuard>
-        ),
+        element: <FragmentPuzzlePage />,
       },
       {
         path: ROUTES.stage1945,

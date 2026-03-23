@@ -21,7 +21,7 @@ const initialFlashlight = {
 
 const getNextRoute = (stage) => {
   if (stage === 1) {
-    return ROOM_ROUTES[2];
+    return ROUTES.fragmentPuzzle;
   }
 
   if (stage === 2) {

@@ -1,14 +1,17 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../../../shared/constants/routes";
 import "../styles/FragmentPuzzle.css";
 
 const FragmentPuzzlePage = () => {
+  const navigate = useNavigate();
   const [fragments, setFragments] = useState([
     {
       id: 1,
       text: "Chủ trương làm tư sản\ndân quyền cách mạng...",
-      initialPos: { x: 50, y: 80 },
-      currentPos: { x: 50, y: 80 },
-      targetPos: { x: 180, y: 100 },
+      initialPos: { x: 40, y: 20 },
+      currentPos: { x: 40, y: 20 },
+      targetPos: { x: 65, y: 330 },
       rotation: -15,
       aligned: false,
       org: "Đương Dương CS Đảng",
@@ -16,9 +19,9 @@ const FragmentPuzzlePage = () => {
     {
       id: 2,
       text: "...và thổ địa\ncách mạng...",
-      initialPos: { x: 350, y: 200 },
-      currentPos: { x: 350, y: 200 },
-      targetPos: { x: 180, y: 230 },
+      initialPos: { x: 420, y: 20 },
+      currentPos: { x: 420, y: 20 },
+      targetPos: { x: 325, y: 330 },
       rotation: 5,
       aligned: false,
       org: "An Nam CS Đảng",
@@ -26,9 +29,9 @@ const FragmentPuzzlePage = () => {
     {
       id: 3,
       text: "...để xây dựng\ndảng thống nhất...",
-      initialPos: { x: 450, y: 100 },
-      currentPos: { x: 450, y: 100 },
-      targetPos: { x: 180, y: 360 },
+      initialPos: { x: 500, y: 20 },
+      currentPos: { x: 500, y: 20 },
+      targetPos: { x: 585, y: 330 },
       rotation: 12,
       aligned: false,
       org: "Hồng Kông CS Đảng",
@@ -36,9 +39,9 @@ const FragmentPuzzlePage = () => {
     {
       id: 4,
       text: "...hướng tới xã hội\ncộng sản toàn cầu...",
-      initialPos: { x: 100, y: 400 },
-      currentPos: { x: 100, y: 400 },
-      targetPos: { x: 180, y: 490 },
+      initialPos: { x: 150, y: 120 },
+      currentPos: { x: 150, y: 120 },
+      targetPos: { x: 160, y: 440 },
       rotation: -8,
       aligned: false,
       org: "Mặt trận đoàn kết",
@@ -46,9 +49,9 @@ const FragmentPuzzlePage = () => {
     {
       id: 5,
       text: "...độc lập tự do\nthịnh vượng.",
-      initialPos: { x: 350, y: 450 },
-      currentPos: { x: 350, y: 450 },
-      targetPos: { x: 180, y: 620 },
+      initialPos: { x: 380, y: 120 },
+      currentPos: { x: 380, y: 120 },
+      targetPos: { x: 420, y: 440 },
       rotation: 10,
       aligned: false,
       org: "Tuyên ngôn chính trị",
@@ -62,8 +65,9 @@ const FragmentPuzzlePage = () => {
   const [showUnifiedDocument, setShowUnifiedDocument] = useState(false);
   const [password, setPassword] = useState("");
   const [notification, setNotification] = useState(null);
+  const [rejectedFragmentId, setRejectedFragmentId] = useState(null);
   const gameRef = useRef(null);
-  const SNAP_DISTANCE = 20;
+  const SNAP_DISTANCE = 40;
 
   const handleMouseDown = (e, fragmentId) => {
     const fragment = fragments.find((f) => f.id === fragmentId);
@@ -100,24 +104,67 @@ const FragmentPuzzlePage = () => {
     if (draggedId === null) return;
 
     const draggedFragment = fragments.find((f) => f.id === draggedId);
-    const distance = Math.sqrt(
-      Math.pow(draggedFragment.currentPos.x - draggedFragment.targetPos.x, 2) +
-        Math.pow(draggedFragment.currentPos.y - draggedFragment.targetPos.y, 2),
-    );
 
-    if (distance < SNAP_DISTANCE) {
-      setFragments((prev) =>
-        prev.map((frag) =>
-          frag.id === draggedId
-            ? {
-                ...frag,
-                currentPos: { ...frag.targetPos },
-                aligned: true,
-                rotation: 0,
-              }
-            : frag,
-        ),
+    // Find nearest target slot to current position
+    let nearestSlot = null;
+    let minDistance = SNAP_DISTANCE;
+
+    fragments.forEach((frag) => {
+      const distance = Math.sqrt(
+        Math.pow(draggedFragment.currentPos.x - frag.targetPos.x, 2) +
+          Math.pow(draggedFragment.currentPos.y - frag.targetPos.y, 2),
       );
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        nearestSlot = frag;
+      }
+    });
+
+    if (nearestSlot) {
+      if (nearestSlot.id === draggedId) {
+        // Correct piece in correct slot
+        setFragments((prev) =>
+          prev.map((frag) =>
+            frag.id === draggedId
+              ? {
+                  ...frag,
+                  currentPos: { ...frag.targetPos },
+                  aligned: true,
+                  rotation: 0,
+                }
+              : frag,
+          ),
+        );
+      } else {
+        // Wrong piece - trigger rejection animation
+        setRejectedFragmentId(draggedId);
+
+        // Reset position after animation completes
+        setTimeout(() => {
+          setRejectedFragmentId(null);
+          setFragments((prev) =>
+            prev.map((frag) =>
+              frag.id === draggedId
+                ? {
+                    ...frag,
+                    currentPos: { ...frag.initialPos },
+                    rotation:
+                      frag.id === 1
+                        ? -15
+                        : frag.id === 2
+                          ? 5
+                          : frag.id === 3
+                            ? 12
+                            : frag.id === 4
+                              ? -8
+                              : 10,
+                  }
+                : frag,
+            ),
+          );
+        }, 650);
+      }
     }
 
     setDraggedId(null);
@@ -143,6 +190,7 @@ const FragmentPuzzlePage = () => {
     // Only CỬU LONG (HONG KONG) - but not revealed on screen
     if (
       upperInput === "CỬU LONG" ||
+      upperInput === "CUU LONG" ||
       upperInput === "CUULONG" ||
       upperInput === "HONG KONG" ||
       upperInput === "HONGKONG"
@@ -164,6 +212,11 @@ const FragmentPuzzlePage = () => {
   };
 
   const closeNotification = () => {
+    if (notification?.type === "success") {
+      setTimeout(() => {
+        navigate(ROUTES.stage1945);
+      }, 300);
+    }
     setNotification(null);
   };
 
@@ -235,7 +288,7 @@ const FragmentPuzzlePage = () => {
           {fragments.map((fragment) => (
             <div
               key={fragment.id}
-              className={`fragment ${fragment.aligned ? "aligned" : ""} ${draggedId === fragment.id ? "dragging" : ""}`}
+              className={`fragment ${fragment.aligned ? "aligned" : ""} ${draggedId === fragment.id ? "dragging" : ""} ${rejectedFragmentId === fragment.id ? "rejected" : ""}`}
               style={{
                 left: `${fragment.currentPos.x}px`,
                 top: `${fragment.currentPos.y}px`,
@@ -285,6 +338,17 @@ const FragmentPuzzlePage = () => {
           )}
         </div>
 
+        {/* Tutorial */}
+        <div className="tutorial-panel">
+          <h3>📖 Hướng dẫn chơi:</h3>
+          <ul>
+            <li>Có 5 mảnh ghép cần được sắp xếp vào 5 ô trống được đánh số</li>
+            <li>Kéo thả các mảnh giấy vào ô tương ứng</li>
+            <li>Ghép đúng toàn bộ 5 mảnh để mở khoá câu hỏi lịch sử</li>
+            <li>Trả lời câu hỏi chính xác để hoàn thành nhiệm vụ</li>
+          </ul>
+        </div>
+
         {/* Password form - shown after successful assembly */}
         {showPassword && (
           <div className="password-form-container">
@@ -312,9 +376,6 @@ const FragmentPuzzlePage = () => {
 
         {/* Control buttons */}
         <div className="controls">
-          <button onClick={resetGame} className="reset-btn">
-            🔄 Bắt đầu lại
-          </button>
           <div className="progress">
             <div className="progress-text">
               Mảnh ghép: {fragments.filter((f) => f.aligned).length}/5
@@ -329,17 +390,6 @@ const FragmentPuzzlePage = () => {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Tutorial */}
-      <div className="tutorial-panel">
-        <h3>📖 Hướng dẫn chơi:</h3>
-        <ul>
-          <li>Có 5 mảnh ghép cần được sắp xếp vào 5 ô trống được đánh số</li>
-          <li>Kéo thả các mảnh giấy vào ô tương ứng</li>
-          <li>Ghép đúng toàn bộ 5 mảnh để mở khoá câu hỏi lịch sử</li>
-          <li>Trả lời câu hỏi chính xác để hoàn thành nhiệm vụ</li>
-        </ul>
       </div>
 
       {/* Notification Modal */}
