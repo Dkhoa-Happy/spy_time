@@ -33,6 +33,18 @@ const getNextRoute = (stage) => {
   return ROUTES.missionComplete;
 };
 
+const getPreviousRoute = (stage) => {
+  if (stage === 3) {
+    return ROUTES.stage1945;
+  }
+
+  if (stage === 2) {
+    return ROUTES.stage1930;
+  }
+
+  return ROUTES.home;
+};
+
 const getLockedMessage = (stage) => {
   if (stage === 2) {
     return "Bạn cần giải phòng 1930 trước khi tiếp cận 1945.";
@@ -132,9 +144,22 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
   const renderRoom1945 = activeStage === 2;
   const renderRoom1986 = activeStage === 3;
 
+  const handleBackToPreviousStage = () => {
+    navigate(getPreviousRoute(activeStage));
+  };
+
   return (
     <section className="space-y-5">
       <header className="rounded-xl border border-border bg-surface p-5">
+        <div className="mb-4 flex justify-start">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={handleBackToPreviousStage}
+          >
+            Quay lại màn trước
+          </Button>
+        </div>
         <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
           Time-traveling Spy
         </p>

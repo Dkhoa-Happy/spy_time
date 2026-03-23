@@ -10,12 +10,33 @@ import {
 import { Button } from "../../../shared/ui/button";
 import { ROUTES } from "../../../shared/constants/routes";
 
+const getResumeRoute = (game) => {
+  if (game.missionCompleted) {
+    return ROUTES.missionComplete;
+  }
+
+  if (game.unlockedStage >= 3) {
+    return ROUTES.stage1986;
+  }
+
+  if (game.unlockedStage === 2) {
+    return ROUTES.stage1945;
+  }
+
+  return ROUTES.stage1930;
+};
+
 export const HomePage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { projectName, missionCounter, game } = useSelector(
     (state) => state.app,
   );
+  const resumeRoute = getResumeRoute(game);
+  const hasProgress =
+    game.completedStages.length > 0 ||
+    game.unlockedStage > 1 ||
+    game.missionCompleted;
 
   const unlockToStageThreeForTesting = () => {
     dispatch(completeStage(1));
@@ -39,22 +60,12 @@ export const HomePage = () => {
 
         <div className="mt-8 flex flex-wrap gap-3">
           <Button asChild>
-            <Link to={ROUTES.stage1930}>
+            <Link to={resumeRoute}>
               <Compass className="size-4" />
-              Bắt đầu nhiệm vụ
+              {hasProgress ? "Tiếp tục nhiệm vụ" : "Bắt đầu nhiệm vụ"}
             </Link>
           </Button>
-          <Button onClick={() => dispatch(incrementMissionCounter())}>
-            <Compass className="size-4" />
-            Tăng bộ đếm
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={() => dispatch(resetMissionCounter())}
-          >
-            <RefreshCw className="size-4" />
-            Đặt lại bộ đếm
-          </Button>
+
           <Button variant="secondary" onClick={unlockToStageThreeForTesting}>
             Mở nhanh Stage 3 (test)
           </Button>
@@ -65,10 +76,7 @@ export const HomePage = () => {
         <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
           Tiến độ giải mã
         </p>
-        <p className="mt-3 text-sm text-muted-foreground">Bộ đếm thử nghiệm</p>
-        <p className="mt-2 tracking-tighter text-5xl font-bold text-foreground">
-          {missionCounter}
-        </p>
+
         <p className="mt-5 text-sm text-muted-foreground">Phòng đã mở khóa</p>
         <p className="mt-1 tracking-tighter text-4xl font-bold text-foreground">
           {game.unlockedStage}/3

@@ -1,12 +1,50 @@
 import { useState, useRef, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import "../styles/FragmentPuzzle.css";
 import { completeStage } from "../../../app/store/slices/appSlice";
 import { ROUTES } from "@/shared/constants/routes";
 
 const getFragmentRotation = (fragmentId) =>
-  fragmentId === 1 ? -15 : fragmentId === 2 ? 5 : fragmentId === 3 ? 12 : fragmentId === 4 ? -8 : 10;
+  fragmentId === 1
+    ? -15
+    : fragmentId === 2
+      ? 5
+      : fragmentId === 3
+        ? 12
+        : fragmentId === 4
+          ? -8
+          : 10;
+
+const SLOT_IDS = [1, 2, 3, 4, 5];
+
+const getBurstOffset = (fragmentId) => {
+  const offsets = {
+    1: { x: -34, y: 22 },
+    2: { x: 34, y: 18 },
+    3: { x: -24, y: -20 },
+    4: { x: 26, y: -24 },
+    5: { x: 0, y: 30 },
+  };
+
+  return offsets[fragmentId] ?? { x: 0, y: 0 };
+};
+
+const getResumeRoute = (game) => {
+  if (game.missionCompleted) {
+    return ROUTES.missionComplete;
+  }
+
+  if (game.unlockedStage >= 3) {
+    return ROUTES.stage1986;
+  }
+
+  if (game.unlockedStage === 2) {
+    return ROUTES.stage1945;
+  }
+
+  return ROUTES.home;
+};
 
 const getResponsiveLayout = (viewportWidth) => {
   if (viewportWidth <= 480) {
@@ -15,9 +53,11 @@ const getResponsiveLayout = (viewportWidth) => {
       sheetTop: 78,
       pieceWidth: 130,
       pieceHeight: 108,
-      columnGap: 28,
-      rowGap: 34,
-      topOffset: 76,
+      starUpperOffsetX: 112,
+      starLowerOffsetX: 82,
+      starTopY: 92,
+      starUpperSideY: 226,
+      starLowerSideY: 386,
     };
   }
 
@@ -27,9 +67,11 @@ const getResponsiveLayout = (viewportWidth) => {
       sheetTop: 92,
       pieceWidth: 200,
       pieceHeight: 144,
-      columnGap: 32,
-      rowGap: 32,
-      topOffset: 84,
+      starUpperOffsetX: 132,
+      starLowerOffsetX: 112,
+      starTopY: 96,
+      starUpperSideY: 274,
+      starLowerSideY: 486,
     };
   }
 
@@ -38,42 +80,41 @@ const getResponsiveLayout = (viewportWidth) => {
     sheetTop: 110,
     pieceWidth: 220,
     pieceHeight: 156,
-    columnGap: 34,
-    rowGap: 34,
-    topOffset: 86,
+    starUpperOffsetX: 146,
+    starLowerOffsetX: 126,
+    starTopY: 106,
+    starUpperSideY: 300,
+    starLowerSideY: 530,
   };
 };
 
-const getTargetPosition = (fragmentId, canvasWidth, viewportWidth) => {
+const getSlotPosition = (slotId, canvasWidth, viewportWidth) => {
   const layout = getResponsiveLayout(viewportWidth);
   const sheetLeft = (canvasWidth - layout.sheetWidth) / 2;
-  const leftColumnX =
-    (layout.sheetWidth - layout.pieceWidth * 2 - layout.columnGap) / 2;
-  const rightColumnX = leftColumnX + layout.pieceWidth + layout.columnGap;
-  const centerColumnX = (layout.sheetWidth - layout.pieceWidth) / 2;
-  const secondRowY = layout.topOffset + layout.pieceHeight + layout.rowGap;
-  const thirdRowY = secondRowY + layout.pieceHeight + layout.rowGap;
-
-  const offsets =
-    fragmentId === 1
-      ? { x: leftColumnX, y: layout.topOffset }
-      : fragmentId === 2
-        ? { x: rightColumnX, y: layout.topOffset }
-        : fragmentId === 3
-          ? { x: leftColumnX, y: secondRowY }
-          : fragmentId === 4
-            ? { x: rightColumnX, y: secondRowY }
-            : { x: centerColumnX, y: thirdRowY };
+  const centerX = sheetLeft + (layout.sheetWidth - layout.pieceWidth) / 2;
+  const leftUpperX = centerX - layout.starUpperOffsetX;
+  const rightUpperX = centerX + layout.starUpperOffsetX;
+  const leftLowerX = centerX - layout.starLowerOffsetX;
+  const rightLowerX = centerX + layout.starLowerOffsetX;
+  const positions = {
+    1: { x: centerX, y: layout.sheetTop + layout.starTopY },
+    2: { x: rightUpperX, y: layout.sheetTop + layout.starUpperSideY },
+    3: { x: rightLowerX, y: layout.sheetTop + layout.starLowerSideY },
+    4: { x: leftLowerX, y: layout.sheetTop + layout.starLowerSideY },
+    5: { x: leftUpperX, y: layout.sheetTop + layout.starUpperSideY },
+  };
+  const resolved = positions[slotId] ?? positions[1];
 
   return {
-    x: Math.round(sheetLeft + offsets.x),
-    y: Math.round(layout.sheetTop + offsets.y),
+    x: Math.round(resolved.x),
+    y: Math.round(resolved.y),
   };
 };
 
 const FragmentPuzzlePage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const game = useSelector((state) => state.app.game);
   const [fragments, setFragments] = useState([
     {
       id: 1,
@@ -82,6 +123,7 @@ const FragmentPuzzlePage = () => {
       currentPos: { x: 60, y: 70 },
       rotation: -15,
       aligned: false,
+      placedSlotId: null,
     },
     {
       id: 2,
@@ -90,6 +132,7 @@ const FragmentPuzzlePage = () => {
       currentPos: { x: 620, y: 90 },
       rotation: 5,
       aligned: false,
+      placedSlotId: null,
     },
     {
       id: 3,
@@ -98,6 +141,7 @@ const FragmentPuzzlePage = () => {
       currentPos: { x: 90, y: 470 },
       rotation: 12,
       aligned: false,
+      placedSlotId: null,
     },
     {
       id: 4,
@@ -106,6 +150,7 @@ const FragmentPuzzlePage = () => {
       currentPos: { x: 620, y: 470 },
       rotation: -8,
       aligned: false,
+      placedSlotId: null,
     },
     {
       id: 5,
@@ -114,22 +159,23 @@ const FragmentPuzzlePage = () => {
       currentPos: { x: 340, y: 40 },
       rotation: 10,
       aligned: false,
+      placedSlotId: null,
     },
   ]);
 
   const [draggedId, setDraggedId] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const [kickedBack, setKickedBack] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [notification, setNotification] = useState(null);
+  const [burstedFragmentIds, setBurstedFragmentIds] = useState([]);
   const gameRef = useRef(null);
-  const completionTriggeredRef = useRef(false);
   const [viewportWidth, setViewportWidth] = useState(() =>
     typeof window === "undefined" ? 1280 : window.innerWidth,
   );
   const [canvasWidth, setCanvasWidth] = useState(980);
   const SNAP_DISTANCE = 95;
+  const resumeRoute = getResumeRoute(game);
 
   useEffect(() => {
     const handleResize = () => {
@@ -159,10 +205,28 @@ const FragmentPuzzlePage = () => {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (burstedFragmentIds.length === 0) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setBurstedFragmentIds([]);
+    }, 450);
+
+    return () => clearTimeout(timer);
+  }, [burstedFragmentIds]);
+
   const handleMouseDown = (e, fragmentId) => {
     const fragment = fragments.find((f) => f.id === fragmentId);
     if (fragment?.aligned) return;
     const gameRect = gameRef.current.getBoundingClientRect();
+
+    setFragments((prev) =>
+      prev.map((frag) =>
+        frag.id === fragmentId ? { ...frag, placedSlotId: null } : frag,
+      ),
+    );
 
     setDragOffset({
       x: e.clientX - gameRect.left - fragment.currentPos.x,
@@ -194,73 +258,142 @@ const FragmentPuzzlePage = () => {
     if (draggedId === null) return;
 
     const draggedFragment = fragments.find((f) => f.id === draggedId);
+
     if (!draggedFragment) {
       setDraggedId(null);
       return;
     }
 
-    // Find nearest target slot to current position
-    const canvasWidth = gameRef.current?.clientWidth ?? 980;
-    let nearestSlot = null;
+    let nearestSlotId = null;
     let minDistance = SNAP_DISTANCE;
 
-    fragments.forEach((frag) => {
-      const targetPos = getTargetPosition(frag.id, canvasWidth, viewportWidth);
+    SLOT_IDS.forEach((slotId) => {
+      const slotPos = getSlotPosition(slotId, canvasWidth, viewportWidth);
       const distance = Math.sqrt(
-        Math.pow(draggedFragment.currentPos.x - targetPos.x, 2) +
-          Math.pow(draggedFragment.currentPos.y - targetPos.y, 2),
+        Math.pow(draggedFragment.currentPos.x - slotPos.x, 2) +
+          Math.pow(draggedFragment.currentPos.y - slotPos.y, 2),
       );
+
       if (distance < minDistance) {
         minDistance = distance;
-        nearestSlot = { ...frag, targetPos };
+        nearestSlotId = slotId;
       }
     });
 
-    if (nearestSlot && nearestSlot.id === draggedId) {
-      setFragments((prev) =>
-        prev.map((frag) =>
-          frag.id === draggedId
-            ? {
-                ...frag,
-                currentPos: { ...nearestSlot.targetPos },
-                aligned: true,
-                rotation: 0,
-              }
-            : frag,
-        ),
+    if (nearestSlotId !== null) {
+      const slotOccupied = fragments.some(
+        (frag) => frag.id !== draggedId && frag.placedSlotId === nearestSlotId,
       );
-    } else {
-      // Kick back to initial position with bounce animation
-      setKickedBack(draggedId);
-      setTimeout(() => {
+
+      if (!slotOccupied) {
+        const slotPos = getSlotPosition(
+          nearestSlotId,
+          canvasWidth,
+          viewportWidth,
+        );
         setFragments((prev) =>
           prev.map((frag) =>
             frag.id === draggedId
-              ? { ...frag, currentPos: { ...frag.initialPos } }
+              ? {
+                  ...frag,
+                  currentPos: slotPos,
+                  placedSlotId: nearestSlotId,
+                }
               : frag,
           ),
         );
-        setKickedBack(null);
-      }, 400);
+      }
     }
 
     setDraggedId(null);
   };
 
-  useEffect(() => {
-    const allAligned = fragments.every((f) => f.aligned);
-    if (allAligned && !completionTriggeredRef.current) {
-      completionTriggeredRef.current = true;
-      const revealTimer = setTimeout(() => {
-        setShowPassword(true);
-      }, 1000);
-      return () => clearTimeout(revealTimer);
+  const handlePlacementConfirm = () => {
+    if (draggedId !== null) {
+      return;
     }
 
-    if (!allAligned) {
-      completionTriggeredRef.current = false;
+    const placedFragments = fragments.filter(
+      (frag) => frag.placedSlotId !== null,
+    );
+    const placedCount = placedFragments.length;
+    const correctCount = placedFragments.filter(
+      (frag) => frag.placedSlotId === frag.id,
+    ).length;
+    const allPlaced = placedCount === fragments.length;
+    const allCorrect = allPlaced && correctCount === fragments.length;
+
+    if (allCorrect) {
+      setBurstedFragmentIds([]);
+      setFragments((prev) =>
+        prev.map((frag) => ({
+          ...frag,
+          currentPos: {
+            ...getSlotPosition(frag.placedSlotId, canvasWidth, viewportWidth),
+          },
+          aligned: true,
+          rotation: 0,
+        })),
+      );
+
+      setShowPassword(true);
+      setNotification({
+        type: "success",
+        context: "placement-success",
+        title: "✓ ĐÃ CỐ ĐỊNH XONG!",
+        message:
+          "Toàn bộ 5 mảnh đã vào đủ vị trí. Trả lời câu hỏi lịch sử để mở khóa ải tiếp theo.",
+      });
+      return;
     }
-  }, [fragments]);
+
+    const placedIds = placedFragments.map((frag) => frag.id);
+
+    if (placedIds.length > 0) {
+      setBurstedFragmentIds(placedIds);
+    }
+
+    setFragments((prev) =>
+      prev.map((frag) => {
+        if (frag.placedSlotId === null) {
+          return {
+            ...frag,
+            aligned: false,
+            rotation: getFragmentRotation(frag.id),
+          };
+        }
+
+        const burstOffset = getBurstOffset(frag.id);
+        return {
+          ...frag,
+          currentPos: {
+            x: frag.initialPos.x + burstOffset.x,
+            y: frag.initialPos.y + burstOffset.y,
+          },
+          placedSlotId: null,
+          aligned: false,
+          rotation: getFragmentRotation(frag.id),
+        };
+      }),
+    );
+
+    if (!allPlaced) {
+      setNotification({
+        type: "error",
+        context: "placement-progress",
+        title: "Chưa đặt đủ mảnh",
+        message: `Mới có ${placedCount}/5 mảnh nằm trong các vị trí ngôi sao 5 cánh. Hãy kéo đủ rồi xác nhận lại.`,
+      });
+      return;
+    }
+
+    setNotification({
+      type: "error",
+      context: "placement-progress",
+      title: "Sai thứ tự mảnh ghép",
+      message: `Bạn đã đặt đủ 5/5 mảnh nhưng chỉ đúng ${correctCount}/5 vị trí. Hãy ghép theo đúng số thứ tự trên khung (mảnh 1 vào ô 1, ..., mảnh 5 vào ô 5).`,
+    });
+  };
 
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
@@ -277,6 +410,7 @@ const FragmentPuzzlePage = () => {
       dispatch(completeStage(1));
       setNotification({
         type: "success",
+        context: "password-success",
         title: "✓ CHÍNH XÁC!",
         message:
           "Hội nghị hợp nhất đã diễn ra thành công. Đảng cộng sản Việt Nam được thành lập!",
@@ -288,6 +422,7 @@ const FragmentPuzzlePage = () => {
     } else {
       setNotification({
         type: "error",
+        context: "password-error",
         title: "✗ SAI RỒI!",
         message:
           "Hãy ghép đúng tất cả 5 mảnh và suy nghĩ kỹ về lịch sử cách mạng Việt Nam.",
@@ -296,7 +431,7 @@ const FragmentPuzzlePage = () => {
   };
 
   const closeNotification = () => {
-    if (notification?.type === "success") {
+    if (notification?.context === "password-success") {
       setTimeout(() => {
         navigate(ROUTES.stage1945);
       }, 300);
@@ -310,12 +445,14 @@ const FragmentPuzzlePage = () => {
         ...frag,
         currentPos: { ...frag.initialPos },
         aligned: false,
+        placedSlotId: null,
         rotation: getFragmentRotation(frag.id),
       })),
     );
     setShowPassword(false);
     setPassword("");
-    completionTriggeredRef.current = false;
+    setBurstedFragmentIds([]);
+    setNotification(null);
   };
 
   return (
@@ -350,10 +487,8 @@ const FragmentPuzzlePage = () => {
           <h3>Hướng dẫn chơi</h3>
           <ul>
             <li>Có 5 mảnh giấy xé rách không đều cần được ghép lại</li>
-            <li>
-              Kéo thả từng mảnh về đúng vị trí để ghép lại thành một tờ báo
-            </li>
-            <li>Ghép đúng toàn bộ 5 mảnh để câu chữ liền mạch và có nghĩa</li>
+            <li>Kéo từng mảnh vào bố cục ngôi sao 5 cánh trên cuốn nhật ký</li>
+            <li>Bấm nút xác nhận để hệ thống kiểm tra và khóa các mảnh đúng</li>
             <li>Trả lời câu hỏi lịch sử chính xác để hoàn thành nhiệm vụ</li>
           </ul>
         </div>
@@ -411,69 +546,96 @@ const FragmentPuzzlePage = () => {
           </div>
 
           <div className="target-slots-container" aria-hidden>
-            {fragments.map((fragment) => {
-              const targetPos = getTargetPosition(
-                fragment.id,
+            {SLOT_IDS.map((slotId) => {
+              const targetPos = getSlotPosition(
+                slotId,
                 canvasWidth,
                 viewportWidth,
+              );
+              const filled = fragments.some(
+                (fragment) =>
+                  fragment.aligned && fragment.placedSlotId === slotId,
               );
 
               return (
                 <div
-                  key={`slot-${fragment.id}`}
-                  className={`target-slot target-slot-${fragment.id} ${
-                    fragment.aligned ? "filled" : ""
+                  key={`slot-${slotId}`}
+                  className={`target-slot target-slot-${slotId} ${
+                    filled ? "filled" : ""
                   }`}
                   style={{
                     left: `${targetPos.x}px`,
                     top: `${targetPos.y}px`,
                   }}
-                />
+                >
+                  <span className="target-slot-number">{slotId}</span>
+                </div>
               );
             })}
           </div>
 
           {/* Draggable fragments - no target slot guides */}
           {fragments.map((fragment) => {
-              const resolvedPosition = fragment.aligned
-                ? getTargetPosition(fragment.id, canvasWidth, viewportWidth)
-                : fragment.currentPos;
+            const resolvedPosition = fragment.aligned
+              ? getSlotPosition(
+                  fragment.placedSlotId ?? fragment.id,
+                  canvasWidth,
+                  viewportWidth,
+                )
+              : fragment.currentPos;
 
-              return (
-                <div
-                  key={fragment.id}
-                  className={`fragment fragment-${fragment.id} ${fragment.aligned ? "aligned" : ""} ${draggedId === fragment.id ? "dragging" : ""} ${kickedBack === fragment.id ? "kicked-back" : ""}`}
-                  style={{
-                    left: `${resolvedPosition.x}px`,
-                    top: `${resolvedPosition.y}px`,
-                    "--fragment-rotation": `${fragment.rotation}deg`,
-                  }}
-                  onMouseDown={(e) => handleMouseDown(e, fragment.id)}
-                  title="Mảnh giấy mật"
-                >
-                  <div className="fragment-paper-grain" aria-hidden />
-                  <div className="fragment-paper-margin" aria-hidden />
-                  <div className="fragment-paper-holes" aria-hidden>
-                    <span />
-                    <span />
-                    <span />
-                  </div>
-                  <div className="fragment-inner">
-                    <div className="fragment-topline">
-                      <span className="fragment-code">TS-CUU-LONG</span>
-                    </div>
-                    <div className="fragment-text">{fragment.text}</div>
-                  </div>
-                  {fragment.aligned && (
-                    <div className="alignment-indicator">✓</div>
-                  )}
+            return (
+              <div
+                key={fragment.id}
+                className={`fragment fragment-${fragment.id} ${fragment.aligned ? "aligned" : ""} ${draggedId === fragment.id ? "dragging" : ""} ${burstedFragmentIds.includes(fragment.id) ? "kicked-back" : ""}`}
+                style={{
+                  left: `${resolvedPosition.x}px`,
+                  top: `${resolvedPosition.y}px`,
+                  "--fragment-rotation": `${fragment.rotation}deg`,
+                }}
+                onMouseDown={(e) => handleMouseDown(e, fragment.id)}
+              >
+                <div className="fragment-paper-grain" aria-hidden />
+                <div className="fragment-paper-margin" aria-hidden />
+                <div className="fragment-paper-holes" aria-hidden>
+                  <span />
+                  <span />
+                  <span />
                 </div>
-              );
-            })}
+                <div className="fragment-inner">
+                  <div className="fragment-topline">
+                    <span className="fragment-code">TS-CUU-LONG</span>
+                  </div>
+                  <div className="fragment-text">{fragment.text}</div>
+                </div>
+              </div>
+            );
+          })}
+
+          <div className="canvas-confirm-action">
+            <button
+              type="button"
+              className="confirm-btn"
+              onClick={handlePlacementConfirm}
+              disabled={showPassword || draggedId !== null}
+            >
+              Xác nhận vị trí ghép
+            </button>
+          </div>
         </div>
 
         {/* Control buttons */}
         <div className="controls">
+          <p className="placement-hint">
+            Sắp 5 mảnh vào ngôi sao 5 cánh rồi bấm xác nhận để kiểm tra.
+          </p>
+          <button
+            type="button"
+            className="reset-btn"
+            onClick={() => navigate(resumeRoute)}
+          >
+            Về ải đang chơi
+          </button>
           <button type="button" className="reset-btn" onClick={resetGame}>
             Xếp lại manh mối
           </button>
