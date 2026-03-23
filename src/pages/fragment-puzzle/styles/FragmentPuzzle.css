@@ -6,6 +6,10 @@
   --accent-red: #c41e3a;
   --text-light: #e8d4b8;
   --paper-color: #f5e6d3;
+  --dossier-paper-top: #f6e7c8;
+  --dossier-paper-bottom: #e6c998;
+  --dossier-ink: #2c1f12;
+  --dossier-rule: rgba(154, 102, 48, 0.28);
   --shadow-dark: rgba(0, 0, 0, 0.8);
 }
 
@@ -140,29 +144,47 @@
   position: absolute;
   width: 220px;
   height: 150px;
-  background: linear-gradient(135deg, #f5e6d3 0%, #f0dcc6 100%);
-  border: none;
+  background:
+    radial-gradient(
+      circle at 88% 16%,
+      rgba(255, 244, 216, 0.82) 0%,
+      rgba(255, 244, 216, 0) 34%
+    ),
+    linear-gradient(
+      180deg,
+      var(--dossier-paper-top) 0%,
+      var(--dossier-paper-bottom) 100%
+    );
+  border: 1px solid rgba(129, 87, 34, 0.42);
   padding: 15px;
   box-shadow:
-    0 0 15px rgba(0, 0, 0, 0.6),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    inset -2px -2px 4px rgba(0, 0, 0, 0.1);
+    0 10px 24px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2),
+    inset -14px 0 18px rgba(94, 62, 25, 0.12);
   cursor: grab;
   transition: all 0.15s ease;
   user-select: none;
   transform-origin: center center;
-  filter: drop-shadow(4px 4px 8px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(4px 5px 8px rgba(0, 0, 0, 0.45));
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   overflow: visible;
-  background-image: repeating-linear-gradient(
-    90deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.02) 2px,
-    rgba(0, 0, 0, 0.02) 4px
-  );
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(138, 97, 44, 0.12),
+      rgba(138, 97, 44, 0.12) 1px,
+      transparent 1px,
+      transparent 24px
+    ),
+    radial-gradient(
+      circle at 16% 78%,
+      rgba(116, 83, 38, 0.12) 0%,
+      transparent 28%
+    );
+  color: var(--dossier-ink);
+  isolation: isolate;
 }
 
 /* Torn edge effects for each fragment - unique irregular shapes */
@@ -177,9 +199,29 @@
   z-index: 1;
   background: linear-gradient(
     to right,
-    rgba(0, 0, 0, 0.08) 0%,
-    transparent 20%
+    rgba(130, 66, 38, 0.18) 0%,
+    rgba(130, 66, 38, 0.18) 1.5px,
+    transparent 1.5px,
+    transparent 100%
   );
+}
+
+.fragment::after {
+  content: "";
+  position: absolute;
+  top: 17px;
+  left: 5px;
+  width: 6px;
+  height: calc(100% - 34px);
+  pointer-events: none;
+  z-index: 1;
+  background-image: radial-gradient(
+    circle,
+    rgba(99, 67, 30, 0.42) 2.4px,
+    transparent 2.5px
+  );
+  background-size: 6px 24px;
+  background-repeat: repeat-y;
 }
 
 /* Fragment 1 - irregular top-right tear with multiple jagged points */
@@ -320,9 +362,9 @@
 
 .fragment:hover {
   box-shadow:
-    0 0 20px rgba(196, 30, 58, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    0 8px 16px rgba(0, 0, 0, 0.5);
+    0 0 20px rgba(196, 30, 58, 0.32),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+    0 8px 16px rgba(0, 0, 0, 0.45);
   transform: scale(1.02) translateY(-2px);
 }
 
@@ -340,18 +382,18 @@
   cursor: default;
   box-shadow:
     0 0 30px rgba(34, 177, 76, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    inset -2px -2px 4px rgba(0, 0, 0, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.25),
+    inset -12px 0 16px rgba(90, 65, 26, 0.11),
     0 0 20px rgba(34, 177, 76, 0.3);
   filter: drop-shadow(0 0 15px rgba(34, 177, 76, 0.3));
   background-image:
-    linear-gradient(to right, rgba(34, 177, 76, 0.1) 0%, transparent 20%),
+    linear-gradient(to right, rgba(34, 177, 76, 0.12) 0%, transparent 20%),
     repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 2px,
-      rgba(0, 0, 0, 0.02) 2px,
-      rgba(0, 0, 0, 0.02) 4px
+      0deg,
+      rgba(138, 97, 44, 0.12),
+      rgba(138, 97, 44, 0.12) 1px,
+      transparent 1px,
+      transparent 24px
     );
 }
 
@@ -401,6 +443,8 @@
 }
 
 .fragment-inner {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -408,10 +452,13 @@
 }
 
 .fragment-text {
-  font-size: 0.85em;
-  line-height: 1.4;
-  color: #333;
-  font-weight: 500;
+  font-family: "Courier New", monospace;
+  font-size: 0.88em;
+  line-height: 1.45;
+  color: var(--dossier-ink);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 0 rgba(255, 247, 233, 0.52);
   flex-grow: 1;
   display: flex;
   align-items: center;
