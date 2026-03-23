@@ -100,6 +100,10 @@ const FragmentPuzzlePage = () => {
     if (draggedId === null) return;
 
     const draggedFragment = fragments.find((f) => f.id === draggedId);
+    if (!draggedFragment) {
+      setDraggedId(null);
+      return;
+    }
 
     // Find nearest target slot to current position
     let nearestSlot = null;
@@ -109,6 +113,25 @@ const FragmentPuzzlePage = () => {
       const distance = Math.sqrt(
         Math.pow(draggedFragment.currentPos.x - frag.targetPos.x, 2) +
           Math.pow(draggedFragment.currentPos.y - frag.targetPos.y, 2),
+      );
+      if (distance < minDistance) {
+        minDistance = distance;
+        nearestSlot = frag;
+      }
+    });
+
+    if (nearestSlot && nearestSlot.id === draggedId) {
+      setFragments((prev) =>
+        prev.map((frag) =>
+          frag.id === draggedId
+            ? {
+                ...frag,
+                currentPos: { ...frag.targetPos },
+                aligned: true,
+                rotation: 0,
+              }
+            : frag,
+        ),
       );
     } else {
       // Kick back to initial position with bounce animation
@@ -224,7 +247,9 @@ const FragmentPuzzlePage = () => {
           <h3>📖 Hướng dẫn chơi:</h3>
           <ul>
             <li>Có 5 mảnh giấy xé rách không đều cần được ghép lại</li>
-            <li>Kéo thả từng mảnh về đúng vị trí để ghép lại thành một tờ báo</li>
+            <li>
+              Kéo thả từng mảnh về đúng vị trí để ghép lại thành một tờ báo
+            </li>
             <li>Ghép đúng toàn bộ 5 mảnh để câu chữ liền mạch và có nghĩa</li>
             <li>Trả lời câu hỏi lịch sử chính xác để hoàn thành nhiệm vụ</li>
           </ul>
