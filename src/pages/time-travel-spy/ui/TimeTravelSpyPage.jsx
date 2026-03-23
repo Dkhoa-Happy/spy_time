@@ -23,7 +23,7 @@ const getNextRoute = (stage) => {
     return ROUTES.stage1945;
   }
   if (stage === 2) {
-    return ROUTES.stage1986;
+    return ROUTES.stage1986Prep;
   }
 
   if (stage === 3) {
@@ -35,7 +35,7 @@ const getNextRoute = (stage) => {
 
 const getPreviousRoute = (stage) => {
   if (stage === 3) {
-    return ROUTES.stage1945;
+    return ROUTES.stage1986Prep;
   }
 
   if (stage === 2) {
@@ -64,7 +64,13 @@ const getIncorrectMessage = (stage) => {
 export const TimeTravelSpyPage = ({ activeStage }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { unlockedStage } = useSelector((state) => state.app.game);
+  const gameState = useSelector((state) => state.app.game);
+  const unlockedStage = gameState?.unlockedStage ?? 1;
+  const stage3PrepCompleted = Boolean(gameState?.stage3PrepCompleted);
+  const inventory = gameState?.inventory ?? {
+    uvLight: false,
+    fieldNotebook: false,
+  };
 
   const [answers, setAnswers] = useState({
     1: "",
@@ -143,6 +149,8 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
   const renderRoom1930 = activeStage === 1;
   const renderRoom1945 = activeStage === 2;
   const renderRoom1986 = activeStage === 3;
+  const canAccessStage1986Tools =
+    stage3PrepCompleted && inventory.uvLight && inventory.fieldNotebook;
   const showPageHeader = !renderRoom1945;
 
   const handleBackToPreviousStage = () => {
@@ -233,51 +241,73 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
             Puzzle Area: Archived Field Dossier
           </p>
 
-          <Stage1986Notebook
-            answer={answers[3]}
-            onAnswerChange={(value) => updateAnswer(3, value)}
-            onSubmit={(event) => handleSubmit(event, 3)}
-            isUvEnabled={isUvEnabled}
-            onToggleUv={() => setIsUvEnabled((prev) => !prev)}
-            flashlight={flashlight}
-            hiddenMask={hiddenMask}
-            onMouseEnter={() =>
-              setFlashlight((prev) => ({ ...prev, active: true }))
-            }
-            onMouseLeave={() => setFlashlight(initialFlashlight)}
-            onMouseMove={(event) =>
-              updateFlashlightFromPoint(
-                event.clientX,
-                event.clientY,
-                event.currentTarget,
-              )
-            }
-            onTouchStart={(event) => {
-              const touch = event.touches[0];
-              if (!touch) {
-                return;
-              }
+          {!canAccessStage1986Tools && (
+            <div className="mt-4 grid gap-3 rounded-xl border border-brand/35 bg-brand/10 p-4 text-sm text-orange-100">
+              <p className="font-semibold tracking-tight">
+                Màn 3 đang khóa công cụ hỗ trợ.
+              </p>
+              <p>
+                Bạn cần hoàn tất màn bản đồ chuẩn bị để tìm đèn UV và cuốn nhật
+                ký trước khi mở hồ sơ 1986.
+              </p>
+              <div>
+                <Button
+                  type="button"
+                  onClick={() => navigate(ROUTES.stage1986Prep)}
+                >
+                  Đi đến màn bản đồ chuẩn bị
+                </Button>
+              </div>
+            </div>
+          )}
 
-              updateFlashlightFromPoint(
-                touch.clientX,
-                touch.clientY,
-                event.currentTarget,
-              );
-            }}
-            onTouchMove={(event) => {
-              const touch = event.touches[0];
-              if (!touch) {
-                return;
+          {canAccessStage1986Tools && (
+            <Stage1986Notebook
+              answer={answers[3]}
+              onAnswerChange={(value) => updateAnswer(3, value)}
+              onSubmit={(event) => handleSubmit(event, 3)}
+              isUvEnabled={isUvEnabled}
+              onToggleUv={() => setIsUvEnabled((prev) => !prev)}
+              flashlight={flashlight}
+              hiddenMask={hiddenMask}
+              onMouseEnter={() =>
+                setFlashlight((prev) => ({ ...prev, active: true }))
               }
+              onMouseLeave={() => setFlashlight(initialFlashlight)}
+              onMouseMove={(event) =>
+                updateFlashlightFromPoint(
+                  event.clientX,
+                  event.clientY,
+                  event.currentTarget,
+                )
+              }
+              onTouchStart={(event) => {
+                const touch = event.touches[0];
+                if (!touch) {
+                  return;
+                }
 
-              updateFlashlightFromPoint(
-                touch.clientX,
-                touch.clientY,
-                event.currentTarget,
-              );
-            }}
-            onTouchEnd={() => setFlashlight(initialFlashlight)}
-          />
+                updateFlashlightFromPoint(
+                  touch.clientX,
+                  touch.clientY,
+                  event.currentTarget,
+                );
+              }}
+              onTouchMove={(event) => {
+                const touch = event.touches[0];
+                if (!touch) {
+                  return;
+                }
+
+                updateFlashlightFromPoint(
+                  touch.clientX,
+                  touch.clientY,
+                  event.currentTarget,
+                );
+              }}
+              onTouchEnd={() => setFlashlight(initialFlashlight)}
+            />
+          )}
         </div>
       </article>
     </section>

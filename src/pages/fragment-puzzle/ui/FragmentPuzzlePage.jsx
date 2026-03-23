@@ -176,6 +176,7 @@ const FragmentPuzzlePage = () => {
   const [canvasWidth, setCanvasWidth] = useState(980);
   const SNAP_DISTANCE = 95;
   const resumeRoute = getResumeRoute(game);
+  const canReturnToCurrentStage = game.completedStages.includes(2);
 
   useEffect(() => {
     const handleResize = () => {
@@ -424,8 +425,7 @@ const FragmentPuzzlePage = () => {
         type: "error",
         context: "password-error",
         title: "✗ SAI RỒI!",
-        message:
-          "Hãy ghép đúng tất cả 5 mảnh và suy nghĩ kỹ về lịch sử cách mạng Việt Nam.",
+        message: "Hãy thử lại. ",
       });
     }
   };
@@ -629,13 +629,15 @@ const FragmentPuzzlePage = () => {
           <p className="placement-hint">
             Sắp 5 mảnh vào ngôi sao 5 cánh rồi bấm xác nhận để kiểm tra.
           </p>
-          <button
-            type="button"
-            className="reset-btn"
-            onClick={() => navigate(resumeRoute)}
-          >
-            Về ải đang chơi
-          </button>
+          {canReturnToCurrentStage && (
+            <button
+              type="button"
+              className="reset-btn"
+              onClick={() => navigate(resumeRoute)}
+            >
+              Về ải đang chơi
+            </button>
+          )}
           <button type="button" className="reset-btn" onClick={resetGame}>
             Xếp lại manh mối
           </button>

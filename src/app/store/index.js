@@ -31,10 +31,27 @@ const sanitizeGameState = (value) => {
   const missionCompleted =
     value.missionCompleted === true || uniqueCompletedStages.includes(3);
 
+  const stage3PrepCompleted = value.stage3PrepCompleted === true;
+  const hasInventory = value.inventory && typeof value.inventory === "object";
+  const inventory = {
+    uvLight: Boolean(hasInventory ? value.inventory.uvLight : false),
+    fieldNotebook: Boolean(
+      hasInventory ? value.inventory.fieldNotebook : false,
+    ),
+  };
+
+  // Migrate legacy saves: if prep was completed, ensure both items are present.
+  if (stage3PrepCompleted) {
+    inventory.uvLight = true;
+    inventory.fieldNotebook = true;
+  }
+
   return {
     unlockedStage: normalizedUnlockedStage,
     completedStages: uniqueCompletedStages,
     missionCompleted,
+    stage3PrepCompleted,
+    inventory,
   };
 };
 
