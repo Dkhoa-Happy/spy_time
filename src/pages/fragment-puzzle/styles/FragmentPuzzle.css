@@ -104,9 +104,9 @@
 .game-canvas {
   position: relative;
   width: 100%;
-  height: 600px;
-  background: linear-gradient(135deg, #a08968 0%, #8b7355 50%, #6b5344 100%);
-  border-radius: 6px;
+  height: 900px;
+  background: linear-gradient(135deg, #8b7355 0%, #6b5344 100%);
+  border-radius: 4px;
   overflow: hidden;
   cursor: grab;
   box-shadow:
@@ -135,19 +135,18 @@
   cursor: grabbing;
 }
 
-/* Fragment pieces */
+/* Fragment pieces - with torn/irregular edges */
 .fragment {
   position: absolute;
   width: 220px;
   height: 150px;
-  background: linear-gradient(135deg, #f5e6d3 0%, #faf2e8 100%);
-  border: 3px solid #c4a574;
-  border-radius: 1px;
-  padding: 20px;
+  background: linear-gradient(135deg, #f5e6d3 0%, #f0dcc6 100%);
+  border: none;
+  padding: 15px;
   box-shadow:
-    0 4px 15px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    0 0 0 1px rgba(196, 165, 116, 0.3);
+    0 0 15px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.1);
   cursor: grab;
   transition: all 0.15s ease;
   user-select: none;
@@ -156,114 +155,175 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow: visible;
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.02) 2px,
+    rgba(0, 0, 0, 0.02) 4px
+  );
+}
+
+/* Torn edge effects for each fragment - unique irregular shapes */
+.fragment::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.08) 0%,
+    transparent 20%
+  );
+}
+
+/* Fragment 1 - irregular top-right tear with multiple jagged points */
+.fragment:nth-child(1) {
   clip-path: polygon(
     0% 0%,
-    4% 2%,
-    8% 1%,
-    12% 3%,
-    16% 0%,
-    20% 2%,
-    24% 1%,
-    28% 2%,
-    32% 0%,
-    36% 1%,
-    40% 2%,
-    44% 0%,
-    48% 1%,
-    52% 2%,
-    56% 0%,
-    60% 1%,
-    64% 2%,
-    68% 0%,
-    72% 2%,
-    76% 1%,
-    80% 2%,
-    84% 0%,
-    88% 1%,
+    75% 0%,
+    80% 3%,
+    85% 1%,
+    88% 5%,
     92% 2%,
-    96% 1%,
-    100% 0%,
-    99% 5%,
-    100% 10%,
-    99% 14%,
-    100% 18%,
-    99% 22%,
-    100% 26%,
-    99% 30%,
-    100% 34%,
-    99% 38%,
-    100% 42%,
-    99% 46%,
-    100% 50%,
-    99% 54%,
-    100% 58%,
-    99% 62%,
-    100% 66%,
-    99% 70%,
-    100% 74%,
-    99% 78%,
-    100% 82%,
-    99% 86%,
-    100% 90%,
-    99% 94%,
+    95% 6%,
+    98% 3%,
+    100% 8%,
     100% 100%,
-    96% 99%,
-    92% 100%,
-    88% 99%,
-    84% 100%,
-    80% 99%,
-    76% 100%,
-    72% 99%,
-    68% 100%,
-    64% 99%,
-    60% 100%,
-    56% 99%,
-    52% 100%,
-    48% 99%,
-    44% 100%,
-    40% 99%,
-    36% 100%,
-    32% 99%,
-    28% 100%,
-    24% 99%,
+    2% 98%,
+    0% 100%
+  );
+}
+
+/* Fragment 2 - left side with jagged top edge */
+.fragment:nth-child(2) {
+  clip-path: polygon(
+    0% 3%,
+    3% 1%,
+    5% 4%,
+    8% 2%,
+    12% 5%,
+    100% 0%,
+    100% 100%,
+    98% 100%,
+    95% 98%,
+    90% 100%,
+    5% 100%,
+    2% 98%,
+    0% 100%
+  );
+}
+
+/* Fragment 3 - bottom-right torn with ragged bottom */
+.fragment:nth-child(3) {
+  clip-path: polygon(
+    0% 0%,
+    100% 0%,
+    100% 88%,
+    98% 91%,
+    95% 89%,
+    92% 93%,
+    88% 91%,
+    85% 94%,
+    80% 92%,
+    75% 95%,
+    70% 93%,
+    65% 96%,
+    60% 94%,
+    55% 97%,
+    50% 95%,
+    45% 98%,
+    40% 96%,
+    35% 99%,
+    30% 97%,
+    25% 100%,
     20% 100%,
-    16% 99%,
-    12% 100%,
-    8% 99%,
-    4% 100%,
+    15% 99%,
+    10% 100%,
+    5% 98%,
+    2% 100%,
+    0% 100%
+  );
+}
+
+/* Fragment 4 - top-left with complex jagged edge */
+.fragment:nth-child(4) {
+  clip-path: polygon(
+    5% 0%,
+    10% 2%,
+    15% 1%,
+    20% 3%,
+    100% 0%,
+    100% 100%,
     0% 100%,
-    1% 95%,
-    0% 90%,
-    1% 86%,
-    0% 82%,
-    1% 78%,
-    0% 74%,
-    1% 70%,
-    0% 66%,
-    1% 62%,
-    0% 58%,
-    1% 54%,
-    0% 50%,
-    1% 46%,
-    0% 42%,
-    1% 38%,
-    0% 34%,
-    1% 30%,
-    0% 26%,
-    1% 22%,
-    0% 18%,
-    1% 14%,
+    0% 95%,
+    2% 92%,
+    0% 88%,
+    3% 85%,
+    1% 80%,
+    4% 75%,
+    2% 70%,
+    5% 65%,
+    1% 60%,
+    4% 55%,
+    2% 50%,
+    5% 45%,
+    1% 40%,
+    4% 35%,
+    0% 30%,
+    3% 25%,
+    1% 20%,
+    3% 15%,
     0% 10%,
-    1% 5%,
-    0% 0%
+    2% 5%
+  );
+}
+
+/* Fragment 5 - bottom with complex torn pattern */
+.fragment:nth-child(5) {
+  clip-path: polygon(
+    0% 0%,
+    100% 2%,
+    98% 3%,
+    100% 5%,
+    97% 6%,
+    100% 100%,
+    95% 96%,
+    92% 98%,
+    88% 97%,
+    85% 99%,
+    80% 98%,
+    75% 100%,
+    70% 99%,
+    65% 100%,
+    60% 98%,
+    55% 100%,
+    50% 99%,
+    45% 100%,
+    40% 99%,
+    35% 100%,
+    30% 98%,
+    25% 100%,
+    20% 99%,
+    15% 100%,
+    10% 99%,
+    5% 100%,
+    0% 100%,
+    2% 98%
   );
 }
 
 .fragment:hover {
   box-shadow:
-    0 8px 25px rgba(196, 30, 58, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  transform: scale(1.03) translateY(-5px);
+    0 0 20px rgba(196, 30, 58, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 8px 16px rgba(0, 0, 0, 0.5);
+  transform: scale(1.02) translateY(-2px);
 }
 
 .fragment.dragging {
@@ -280,9 +340,38 @@
   cursor: default;
   box-shadow:
     0 0 30px rgba(34, 177, 76, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.1),
+    0 0 20px rgba(34, 177, 76, 0.3);
   filter: drop-shadow(0 0 15px rgba(34, 177, 76, 0.3));
-  border-color: #22b14c;
+  background-image:
+    linear-gradient(to right, rgba(34, 177, 76, 0.1) 0%, transparent 20%),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.02) 2px,
+      rgba(0, 0, 0, 0.02) 4px
+    );
+}
+
+.fragment.kicked-back {
+  animation: kickBack 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow:
+    0 0 20px rgba(196, 30, 58, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+@keyframes kickBack {
+  0% {
+    transform: scale(1.05);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .fragment.rejected {
@@ -356,7 +445,7 @@
   animation: popIn 0.3s ease;
 }
 
-/* Target slots - visual guides for dropping fragments */
+/* Target slots - visual guides for dropping fragments - HIDDEN */
 .target-slots-container {
   position: absolute;
   top: 0;
@@ -365,6 +454,7 @@
   height: 100%;
   pointer-events: none;
   z-index: 1;
+  display: none;
 }
 
 .target-slot {
@@ -532,15 +622,12 @@
   }
 }
 
-/* Unified document - appears when assembled */
-.unified-document {
-  position: absolute;
+.unified-document-container {
+  position: relative;
   left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 380px;
-  max-height: 80vh;
-  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  width: 100%;
   background: linear-gradient(to bottom, #fff9f0 0%, #f5e6d3 100%);
   padding: 40px 30px;
   border: 3px solid #8b7355;
@@ -548,7 +635,7 @@
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
   opacity: 0;
   animation: slideUp 0.6s ease forwards;
-  z-index: 50;
+  z-index: 10;
 }
 
 /* Close modal button */
@@ -568,7 +655,7 @@
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  z-index: 51;
+  z-index: 5;
 }
 
 .close-modal-btn:hover {
@@ -593,9 +680,10 @@
 
 /* Red seal animation */
 .seal-animation {
-  position: absolute;
-  top: 30px;
-  right: 30px;
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
   perspective: 1000px;
 }
 
@@ -822,7 +910,8 @@
 
 /* Tutorial panel */
 .tutorial-panel {
-  margin-top: 30px;
+  margin-top: 15px;
+  margin-bottom: 20px;
   padding: 20px;
   background: rgba(0, 0, 0, 0.5);
   border: 2px solid #666;
@@ -870,7 +959,7 @@
   }
 
   .game-canvas {
-    height: 550px;
+    height: 700px;
   }
 
   .fragment {
@@ -894,8 +983,8 @@
     font-size: 0.75em;
   }
 
-  .unified-document {
-    width: 300px;
+  .unified-document-container {
+    width: 100%;
     padding: 30px 20px;
   }
 
@@ -946,7 +1035,7 @@
   }
 
   .game-canvas {
-    height: 500px;
+    height: 600px;
     margin: 15px 0;
   }
 
@@ -979,8 +1068,8 @@
     font-size: 0.6em;
   }
 
-  .unified-document {
-    width: 250px;
+  .unified-document-container {
+    width: 100%;
     padding: 25px 15px;
   }
 
@@ -1138,5 +1227,90 @@
   .notification-action {
     font-size: 0.9em;
     padding: 10px;
+  }
+}
+
+/* Complete assembled newspaper */
+.complete-newspaper {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  background: linear-gradient(to bottom, #fff9f0 0%, #f5e6d3 100%);
+  border: 4px solid #8b7355;
+  border-radius: 3px;
+  padding: 40px;
+  box-shadow:
+    0 0 50px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  z-index: 200;
+  animation: slideDown 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  text-align: center;
+}
+
+.newspaper-header {
+  border-bottom: 3px solid #8b7355;
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+}
+
+.newspaper-header h2 {
+  margin: 0 0 10px 0;
+  font-size: 2.2em;
+  font-weight: bold;
+  color: #333;
+  letter-spacing: 3px;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+  font-style: italic;
+}
+
+.newspaper-date {
+  margin: 0;
+  color: #666;
+  font-size: 0.95em;
+  letter-spacing: 1px;
+}
+
+.newspaper-content {
+  margin: 30px 0;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.newspaper-text {
+  margin: 0;
+  color: #333;
+  font-size: 1.1em;
+  line-height: 1.8;
+  font-family: "Times New Roman", serif;
+  text-align: justify;
+}
+
+.newspaper-text strong {
+  color: #8b0000;
+  font-weight: bold;
+}
+
+.newspaper-instructions {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 2px dashed #c41e3a;
+  color: #c41e3a;
+  font-size: 0.95em;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
 }
