@@ -1,10 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { ROUTES } from "../../../shared/constants/routes";
+import { completeStage } from "../../../app/store/slices/appSlice";
 import "../styles/FragmentPuzzle.css";
 
 const FragmentPuzzlePage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [fragments, setFragments] = useState([
     {
       id: 1,
@@ -213,6 +216,7 @@ const FragmentPuzzlePage = () => {
 
   const closeNotification = () => {
     if (notification?.type === "success") {
+      dispatch(completeStage(1));
       setTimeout(() => {
         navigate(ROUTES.stage1945);
       }, 300);
