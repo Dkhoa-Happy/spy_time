@@ -21,10 +21,13 @@ const initialFlashlight = {
 
 const getNextRoute = (stage) => {
   if (stage === 1) {
+    return ROOM_ROUTES[1];
+  }
+  if (stage === 2) {
     return ROOM_ROUTES[2];
   }
 
-  if (stage === 2) {
+  if (stage === 3) {
     return ROOM_ROUTES[3];
   }
 
