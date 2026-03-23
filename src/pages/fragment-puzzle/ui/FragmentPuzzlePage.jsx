@@ -169,6 +169,62 @@ const FragmentPuzzlePage = () => {
   const [password, setPassword] = useState("");
   const [notification, setNotification] = useState(null);
   const [burstedFragmentIds, setBurstedFragmentIds] = useState([]);
+  const [currentRound, setCurrentRound] = useState(1); // 1 or 2
+  const [crosswordAnswers, setCrosswordAnswers] = useState({
+    clue1: "",
+    clue2: "",
+    clue3: "",
+    clue4: "",
+    clue5: "",
+    clue6: "",
+  });
+  const [crosswordStatus, setCrosswordStatus] = useState({
+    clue1: null, // null, "correct", "incorrect"
+    clue2: null,
+    clue3: null,
+    clue4: null,
+    clue5: null,
+    clue6: null,
+  });
+
+  const crosswordClues = [
+    {
+      id: "clue1",
+      text: "Trong giai đoạn 1936-1939, Đảng đã dẫn dắt phong trào đấu tranh đòi dân sinh, [...] và cải thiện đời sống.",
+      answer: "DANCHU",
+      length: 6,
+    },
+    {
+      id: "clue2",
+      text: "Đại hội Đảng lần I năm 1935 nhằm khôi phục tổ chức sau thời kỳ bị đàn áp được diễn ra tại đâu?",
+      answer: "MACAO",
+      length: 5,
+    },
+    {
+      id: "clue3",
+      text: "Lực lượng nào lần đầu tiên giành được quyền làm chủ ở một số địa phương trong phong trào 1930-1931?",
+      answer: "QUANCHUNG",
+      length: 9,
+    },
+    {
+      id: "clue4",
+      text: "Tên tổ chức Mặt trận được thành lập theo quyết định của Hội nghị Trung ương 8 (5/1941) để mở rộng lực lượng?",
+      answer: "VIETMINH",
+      length: 8,
+    },
+    {
+      id: "clue5",
+      text: "Phong trào [_______] Nghệ Tĩnh được coi là đỉnh cao của cách mạng những năm 1930-1931.",
+      answer: "XOVIET",
+      length: 6,
+    },
+    {
+      id: "clue6",
+      text: "Tên gọi của loại văn bản được ban hành ngày 12/3/1945 ('... Nhật - Pháp bắn nhau...') nhằm chuẩn bị trực tiếp cho Tổng khởi nghĩa?",
+      answer: "CHITHI",
+      length: 6,
+    },
+  ];
   const gameRef = useRef(null);
   const [viewportWidth, setViewportWidth] = useState(() =>
     typeof window === "undefined" ? 1280 : window.innerWidth,
@@ -408,7 +464,6 @@ const FragmentPuzzlePage = () => {
       upperInput === "HONG KONG" ||
       upperInput === "HONGKONG"
     ) {
-      dispatch(completeStage(1));
       setNotification({
         type: "success",
         context: "password-success",
@@ -416,9 +471,12 @@ const FragmentPuzzlePage = () => {
         message:
           "Hội nghị hợp nhất đã diễn ra thành công. Đảng cộng sản Việt Nam được thành lập!",
       });
-      // Navigate to stage 1945 after a short delay
+      // Transition to Round 2 (Crossword puzzle)
       setTimeout(() => {
-        navigate(ROUTES.stage1945);
+        setShowPassword(false);
+        setPassword("");
+        setNotification(null);
+        setCurrentRound(2);
       }, 1500);
     } else {
       setNotification({
@@ -430,8 +488,63 @@ const FragmentPuzzlePage = () => {
     }
   };
 
+  const handleCrosswordAnswerChange = (clueId, value) => {
+    setCrosswordAnswers((prev) => ({
+      ...prev,
+      [clueId]: value,
+    }));
+  };
+
+  const validateCrosswordClue = (clueId, answerValue = null) => {
+    const clue = crosswordClues.find((c) => c.id === clueId);
+    if (!clue) return;
+
+    // Use provided answerValue if available, otherwise read from state
+    const userAnswer = (answerValue || crosswordAnswers[clueId])
+      .toUpperCase()
+      .trim()
+      .replace(/\s+/g, "");
+    const isCorrect = userAnswer === clue.answer && userAnswer.length > 0;
+
+    setCrosswordStatus((prev) => ({
+      ...prev,
+      [clueId]: isCorrect
+        ? "correct"
+        : userAnswer.length > 0
+          ? "incorrect"
+          : null,
+    }));
+
+    // Auto-clear incorrect answers after 800ms
+    if (!isCorrect && userAnswer.length > 0) {
+      setTimeout(() => {
+        setCrosswordAnswers((prev) => ({
+          ...prev,
+          [clueId]: "",
+        }));
+        setCrosswordStatus((prev) => ({
+          ...prev,
+          [clueId]: null,
+        }));
+      }, 800);
+    }
+  };
+
+  const checkAllCrosswordCorrect = () => {
+    return Object.values(crosswordStatus).every(
+      (status) => status === "correct",
+    );
+  };
+
   const closeNotification = () => {
     if (notification?.context === "password-success") {
+      setTimeout(() => {
+        setShowPassword(false);
+        setPassword("");
+        setNotification(null);
+        setCurrentRound(2);
+      }, 300);
+    } else if (notification?.context === "crossword-success") {
       setTimeout(() => {
         navigate(ROUTES.stage1945);
       }, 300);
@@ -453,6 +566,15 @@ const FragmentPuzzlePage = () => {
     setPassword("");
     setBurstedFragmentIds([]);
     setNotification(null);
+    setCurrentRound(1);
+    setCrosswordAnswers({
+      clue1: "",
+      clue2: "",
+      clue3: "",
+      clue4: "",
+      clue5: "",
+      clue6: "",
+    });
   };
 
   return (
@@ -460,7 +582,10 @@ const FragmentPuzzlePage = () => {
       <div className="bunker-backdrop"></div>
 
       <div className="game-panel">
-        <div className="mission-brief">
+        <div
+          className="mission-brief"
+          style={{ display: currentRound === 2 ? "none" : "block" }}
+        >
           <div className="dossier-card-accent" aria-hidden>
             <span />
             <span />
@@ -478,7 +603,10 @@ const FragmentPuzzlePage = () => {
         </div>
 
         {/* Tutorial - shown below mission brief */}
-        <div className="tutorial-panel">
+        <div
+          className="tutorial-panel"
+          style={{ display: currentRound === 2 ? "none" : "block" }}
+        >
           <div className="dossier-card-accent" aria-hidden>
             <span />
             <span />
@@ -494,7 +622,7 @@ const FragmentPuzzlePage = () => {
         </div>
 
         {/* Password form - shown at top after successful assembly */}
-        {showPassword && (
+        {showPassword && currentRound === 1 && (
           <div className="password-form-container">
             <form onSubmit={handlePasswordSubmit} className="password-form">
               <div className="dossier-card-accent" aria-hidden>
@@ -524,12 +652,140 @@ const FragmentPuzzlePage = () => {
           </div>
         )}
 
+        {/* Crossword puzzle form - shown after password success */}
+        {currentRound === 2 && (
+          <div className="crossword-form-container">
+            <div className="crossword-header">
+              <h2>VÒNG 2: GIẢI Ô CHỮ LỊCH SỬ</h2>
+              <p className="crossword-instruction">
+                Nhập từng ký tự vào các ô tương ứng
+              </p>
+            </div>
+
+            <div className="crossword-clues-grid">
+              {crosswordClues.map((clue) => (
+                <div key={clue.id} className="crossword-clue-block">
+                  <div className="clue-question">{clue.text}</div>
+
+                  <div className="crossword-grid-container">
+                    <div className="crossword-grid">
+                      {Array.from({ length: clue.length }).map((_, idx) => (
+                        <input
+                          key={`${clue.id}-${idx}`}
+                          type="text"
+                          className={`crossword-cell ${crosswordStatus[clue.id] === "correct" ? "correct" : ""} ${crosswordStatus[clue.id] === "incorrect" ? "incorrect" : ""}`}
+                          maxLength="1"
+                          value={crosswordAnswers[clue.id][idx] || ""}
+                          onChange={(e) => {
+                            const newAnswer = (
+                              crosswordAnswers[clue.id] || ""
+                            ).split("");
+                            newAnswer[idx] = e.target.value.toUpperCase();
+                            const fullAnswer = newAnswer
+                              .slice(0, clue.length)
+                              .join("");
+
+                            handleCrosswordAnswerChange(clue.id, fullAnswer);
+
+                            // Auto-focus to next cell
+                            if (e.target.value && idx < clue.length - 1) {
+                              const nextInput =
+                                e.target.parentElement?.children?.[idx + 1];
+                              nextInput?.focus?.();
+                            }
+
+                            // Auto-validate when all cells filled after a short delay
+                            if (
+                              fullAnswer.length === clue.length &&
+                              e.target.value
+                            ) {
+                              setTimeout(() => {
+                                validateCrosswordClue(clue.id, fullAnswer);
+                              }, 50);
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            // Handle backspace to focus previous cell
+                            if (
+                              e.key === "Backspace" &&
+                              !e.target.value &&
+                              idx > 0
+                            ) {
+                              const prevInput =
+                                e.target.parentElement?.children?.[idx - 1];
+                              prevInput?.focus?.();
+                            }
+                            // Handle arrow keys for navigation
+                            if (
+                              e.key === "ArrowRight" &&
+                              idx < clue.length - 1
+                            ) {
+                              e.target.parentElement?.children?.[
+                                idx + 1
+                              ]?.focus?.();
+                            }
+                            if (e.key === "ArrowLeft" && idx > 0) {
+                              e.target.parentElement?.children?.[
+                                idx - 1
+                              ]?.focus?.();
+                            }
+                          }}
+                          autoFocus={
+                            idx === 0 && crosswordClues.indexOf(clue) === 0
+                          }
+                        />
+                      ))}
+                    </div>
+
+                    {crosswordStatus[clue.id] && (
+                      <div
+                        className={`clue-status ${crosswordStatus[clue.id]}`}
+                      >
+                        {crosswordStatus[clue.id] === "correct" ? (
+                          <span className="status-icon correct">✓</span>
+                        ) : (
+                          <span className="status-icon incorrect">✗</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {checkAllCrosswordCorrect() && (
+              <div className="crossword-complete-actions">
+                <button
+                  type="button"
+                  className="continue-btn"
+                  onClick={() => {
+                    dispatch(completeStage(1));
+                    setNotification({
+                      type: "success",
+                      context: "crossword-success",
+                      title: "✓ VÒNG 2 HOÀN THÀNH!",
+                      message:
+                        "Bạn đã giải ô chữ lịch sử thành công! Đông đảo quần chúng tham gia phong trào cách mạng.",
+                    });
+                    setTimeout(() => {
+                      navigate(ROUTES.stage1945);
+                    }, 1500);
+                  }}
+                >
+                  Tiếp tục
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
         <div
           className="game-canvas"
           ref={gameRef}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
+          style={{ display: currentRound === 2 ? "none" : "block" }}
         >
           <div className="assembly-sheet" aria-hidden>
             <div className="assembly-sheet__grain" />
@@ -625,7 +881,10 @@ const FragmentPuzzlePage = () => {
         </div>
 
         {/* Control buttons */}
-        <div className="controls">
+        <div
+          className="controls"
+          style={{ display: currentRound === 2 ? "none" : "block" }}
+        >
           <p className="placement-hint">
             Sắp 5 mảnh vào ngôi sao 5 cánh rồi bấm xác nhận để kiểm tra.
           </p>
