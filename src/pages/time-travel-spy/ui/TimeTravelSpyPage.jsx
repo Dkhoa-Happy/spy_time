@@ -6,7 +6,6 @@ import { completeStage } from "../../../app/store/slices/appSlice";
 import { ROUTES } from "../../../shared/constants/routes";
 import { Button } from "../../../shared/ui/button";
 import {
-  ROOM_ROUTES,
   ROOM_TITLES,
   isCorrectPassword,
 } from "../../../features/time-travel-spy/lib/gameConfig";
@@ -21,14 +20,14 @@ const initialFlashlight = {
 
 const getNextRoute = (stage) => {
   if (stage === 1) {
-    return ROOM_ROUTES[1];
+    return ROUTES.stage1945;
   }
   if (stage === 2) {
-    return ROOM_ROUTES[2];
+    return ROUTES.stage1986;
   }
 
   if (stage === 3) {
-    return ROOM_ROUTES[3];
+    return ROUTES.missionComplete;
   }
 
   return ROUTES.missionComplete;

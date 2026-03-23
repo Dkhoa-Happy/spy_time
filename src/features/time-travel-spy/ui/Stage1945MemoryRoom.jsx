@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowRight,
   CheckCircle2,
@@ -154,6 +154,7 @@ const Stage1945InfoFace = ({ milestone }) => {
 
 export const Stage1945MemoryRoom = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [activePage, setActivePage] = useState(ROOM_PAGES.gameOne);
   const [deck, setDeck] = useState(() => createShuffledStage1945Deck());
   const [matchedPairIds, setMatchedPairIds] = useState([]);
@@ -197,7 +198,13 @@ export const Stage1945MemoryRoom = () => {
 
     dispatch(completeStage(2));
     hasCompletedStageRef.current = true;
-  }, [dispatch, isRoomTwoComplete]);
+
+    const navigationTimer = window.setTimeout(() => {
+      navigate(ROUTES.stage1986);
+    }, 900);
+
+    return () => window.clearTimeout(navigationTimer);
+  }, [dispatch, isRoomTwoComplete, navigate]);
 
   const handleRestart = () => {
     if (resolveTimeoutRef.current) {
