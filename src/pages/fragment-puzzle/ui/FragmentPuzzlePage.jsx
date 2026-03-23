@@ -1,72 +1,71 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/FragmentPuzzle.css";
+import { ROUTES } from "@/shared/constants/routes";
 
 const FragmentPuzzlePage = () => {
+  const navigate = useNavigate();
   const [fragments, setFragments] = useState([
     {
       id: 1,
-      text: "Chủ trương làm tư sản\ndân quyền cách mạng...",
-      initialPos: { x: 50, y: 80 },
-      currentPos: { x: 50, y: 80 },
-      targetPos: { x: 180, y: 100 },
+      text: "Chủ trương làm tư sản\ndân quyền cách mạng,",
+      initialPos: { x: 60, y: 70 },
+      currentPos: { x: 60, y: 70 },
+      targetPos: { x: 150, y: 80 },
       rotation: -15,
       aligned: false,
-      org: "Đương Dương CS Đảng",
     },
     {
       id: 2,
-      text: "...và thổ địa\ncách mạng...",
-      initialPos: { x: 350, y: 200 },
-      currentPos: { x: 350, y: 200 },
-      targetPos: { x: 180, y: 230 },
+      text: "và thổ địa cách mạng,\nđể xây dựng",
+      initialPos: { x: 620, y: 90 },
+      currentPos: { x: 620, y: 90 },
+      targetPos: { x: 420, y: 80 },
       rotation: 5,
       aligned: false,
-      org: "An Nam CS Đảng",
     },
     {
       id: 3,
-      text: "...để xây dựng\ndảng thống nhất...",
-      initialPos: { x: 450, y: 100 },
-      currentPos: { x: 450, y: 100 },
-      targetPos: { x: 180, y: 360 },
+      text: "đảng thống nhất,\nhướng tới",
+      initialPos: { x: 90, y: 470 },
+      currentPos: { x: 90, y: 470 },
+      targetPos: { x: 150, y: 280 },
       rotation: 12,
       aligned: false,
-      org: "Hồng Kông CS Đảng",
     },
     {
       id: 4,
-      text: "...hướng tới xã hội\ncộng sản toàn cầu...",
-      initialPos: { x: 100, y: 400 },
-      currentPos: { x: 100, y: 400 },
-      targetPos: { x: 180, y: 490 },
+      text: "xã hội cộng sản toàn cầu,\nđộc lập",
+      initialPos: { x: 620, y: 470 },
+      currentPos: { x: 620, y: 470 },
+      targetPos: { x: 420, y: 280 },
       rotation: -8,
       aligned: false,
-      org: "Mặt trận đoàn kết",
     },
     {
       id: 5,
-      text: "...độc lập tự do\nthịnh vượng.",
-      initialPos: { x: 350, y: 450 },
-      currentPos: { x: 350, y: 450 },
-      targetPos: { x: 180, y: 620 },
+      text: "tự do thịnh vượng.",
+      initialPos: { x: 340, y: 40 },
+      currentPos: { x: 340, y: 40 },
+      targetPos: { x: 285, y: 480 },
       rotation: 10,
       aligned: false,
-      org: "Tuyên ngôn chính trị",
     },
   ]);
 
   const [draggedId, setDraggedId] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [kickedBack, setKickedBack] = useState(null);
   const [assembled, setAssembled] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showUnifiedDocument, setShowUnifiedDocument] = useState(false);
   const [password, setPassword] = useState("");
   const [notification, setNotification] = useState(null);
   const gameRef = useRef(null);
-  const SNAP_DISTANCE = 20;
+  const SNAP_DISTANCE = 95;
 
   const handleMouseDown = (e, fragmentId) => {
     const fragment = fragments.find((f) => f.id === fragmentId);
+    if (fragment?.aligned) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const gameRect = gameRef.current.getBoundingClientRect();
 
@@ -118,6 +117,19 @@ const FragmentPuzzlePage = () => {
             : frag,
         ),
       );
+    } else {
+      // Kick back to initial position with bounce animation
+      setKickedBack(draggedId);
+      setTimeout(() => {
+        setFragments((prev) =>
+          prev.map((frag) =>
+            frag.id === draggedId
+              ? { ...frag, currentPos: { ...frag.initialPos } }
+              : frag,
+          ),
+        );
+        setKickedBack(null);
+      }, 400);
     }
 
     setDraggedId(null);
@@ -128,8 +140,6 @@ const FragmentPuzzlePage = () => {
     const allAligned = fragments.every((f) => f.aligned);
     if (allAligned && !assembled) {
       setAssembled(true);
-      setShowUnifiedDocument(true);
-      // Show password form after assembly
       setTimeout(() => {
         setShowPassword(true);
       }, 1000);
@@ -153,6 +163,10 @@ const FragmentPuzzlePage = () => {
         message:
           "Hội nghị hợp nhất đã diễn ra thành công. Đảng cộng sản Việt Nam được thành lập!",
       });
+      // Navigate to stage 1945 after a short delay
+      setTimeout(() => {
+        navigate(ROUTES.stage1945);
+      }, 1500);
     } else {
       setNotification({
         type: "error",
@@ -186,7 +200,6 @@ const FragmentPuzzlePage = () => {
       })),
     );
     setAssembled(false);
-    setShowUnifiedDocument(false);
     setShowPassword(false);
     setPassword("");
   };
@@ -202,90 +215,23 @@ const FragmentPuzzlePage = () => {
             Đồng chí giao liên! Phong trào đang bị chia rẽ bởi 3 tổ chức cộng
             sản riêng biệt. Lãnh tụ Nguyễn Ái Quôc đã gửi chỉ thị triệu tập để
             hợp nhất lực lượng cách mạng. Mật thám Pháp đang bủa lưới, bức thư
-            bị xé thành 5 mảnh và gửi qua 5 tuyến liên lạc khác nhau. Hãy ghép
-            nối tất cả các mảnh để đọc được Cương lĩnh chính trị!
+            bị xé thành 5 mảnh rách nát và gửi qua 5 tuyến liên lạc khác nhau.
+            Hãy ghép nối tất cả các mảnh để đọc được Cương lĩnh chính trị!
           </p>
         </div>
 
-        <div
-          className="game-canvas"
-          ref={gameRef}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-        >
-          {/* Target slots for dropping fragments */}
-          <div className="target-slots-container">
-            {fragments.map((frag, idx) => (
-              <div
-                key={`slot-${frag.id}`}
-                className={`target-slot ${frag.aligned ? "filled" : ""}`}
-                style={{
-                  left: `${frag.targetPos.x}px`,
-                  top: `${frag.targetPos.y}px`,
-                }}
-              >
-                <div className="slot-number">{idx + 1}</div>
-                <div className="slot-label">Mảnh {idx + 1}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Render fragments */}
-          {fragments.map((fragment) => (
-            <div
-              key={fragment.id}
-              className={`fragment ${fragment.aligned ? "aligned" : ""} ${draggedId === fragment.id ? "dragging" : ""}`}
-              style={{
-                left: `${fragment.currentPos.x}px`,
-                top: `${fragment.currentPos.y}px`,
-                transform: `rotate(${fragment.rotation}deg)`,
-              }}
-              onMouseDown={(e) => handleMouseDown(e, fragment.id)}
-            >
-              <div className="fragment-inner">
-                <div className="fragment-text">{fragment.text}</div>
-                <div className="fragment-label">{fragment.org}</div>
-              </div>
-              {fragment.aligned && <div className="alignment-indicator">✓</div>}
-            </div>
-          ))}
-
-          {/* Completed document message - shows complete sentence */}
-          {showUnifiedDocument && (
-            <div className="unified-document">
-              <button
-                className="close-modal-btn"
-                onClick={() => setShowUnifiedDocument(false)}
-                title="Đóng"
-              >
-                ✕
-              </button>
-              <div className="seal-animation">
-                <div className="red-seal">HỢP NHẤT</div>
-              </div>
-              <div className="hidden-message">
-                <p>✓ Tất cả 5 mảnh đã được ghép thành công!</p>
-                <p>Cương lĩnh chính trị đã hoàn chỉnh.</p>
-                <div className="complete-sentence">
-                  <p>
-                    <strong>Cương lĩnh chính trị:</strong>
-                  </p>
-                  <p>
-                    "Chủ trương làm tư sản dân quyền cách mạng, và thổ địa cách
-                    mạng, để xây dựng đảng thống nhất, hướng tới xã hội cộng sản
-                    toàn cầu, độc lập tự do thịnh vượng."
-                  </p>
-                </div>
-                <p style={{ marginTop: "20px", fontSize: "0.9em" }}>
-                  Hãy trả lời câu hỏi dưới đây để hoàn thành nhiệm vụ.
-                </p>
-              </div>
-            </div>
-          )}
+        {/* Tutorial - shown below mission brief */}
+        <div className="tutorial-panel">
+          <h3>📖 Hướng dẫn chơi:</h3>
+          <ul>
+            <li>Có 5 mảnh giấy xé rách không đều cần được ghép lại</li>
+            <li>Kéo thả từng mảnh về đúng vị trí để ghép lại thành một tờ báo</li>
+            <li>Ghép đúng toàn bộ 5 mảnh để câu chữ liền mạch và có nghĩa</li>
+            <li>Trả lời câu hỏi lịch sử chính xác để hoàn thành nhiệm vụ</li>
+          </ul>
         </div>
 
-        {/* Password form - shown after successful assembly */}
+        {/* Password form - shown at top after successful assembly */}
         {showPassword && (
           <div className="password-form-container">
             <form onSubmit={handlePasswordSubmit} className="password-form">
@@ -310,11 +256,36 @@ const FragmentPuzzlePage = () => {
           </div>
         )}
 
+        <div
+          className="game-canvas"
+          ref={gameRef}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+        >
+          {/* Draggable fragments - no target slot guides */}
+          {fragments.map((fragment) => (
+            <div
+              key={fragment.id}
+              className={`fragment fragment-${fragment.id} ${fragment.aligned ? "aligned" : ""} ${draggedId === fragment.id ? "dragging" : ""} ${kickedBack === fragment.id ? "kicked-back" : ""}`}
+              style={{
+                left: `${fragment.currentPos.x}px`,
+                top: `${fragment.currentPos.y}px`,
+                transform: `rotate(${fragment.rotation}deg)`,
+              }}
+              onMouseDown={(e) => handleMouseDown(e, fragment.id)}
+              title={`Mảnh ${fragment.id}`}
+            >
+              <div className="fragment-inner">
+                <div className="fragment-text">{fragment.text}</div>
+              </div>
+              {fragment.aligned && <div className="alignment-indicator">✓</div>}
+            </div>
+          ))}
+        </div>
+
         {/* Control buttons */}
         <div className="controls">
-          <button onClick={resetGame} className="reset-btn">
-            🔄 Bắt đầu lại
-          </button>
           <div className="progress">
             <div className="progress-text">
               Mảnh ghép: {fragments.filter((f) => f.aligned).length}/5
@@ -329,17 +300,6 @@ const FragmentPuzzlePage = () => {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Tutorial */}
-      <div className="tutorial-panel">
-        <h3>📖 Hướng dẫn chơi:</h3>
-        <ul>
-          <li>Có 5 mảnh ghép cần được sắp xếp vào 5 ô trống được đánh số</li>
-          <li>Kéo thả các mảnh giấy vào ô tương ứng</li>
-          <li>Ghép đúng toàn bộ 5 mảnh để mở khoá câu hỏi lịch sử</li>
-          <li>Trả lời câu hỏi chính xác để hoàn thành nhiệm vụ</li>
-        </ul>
       </div>
 
       {/* Notification Modal */}
