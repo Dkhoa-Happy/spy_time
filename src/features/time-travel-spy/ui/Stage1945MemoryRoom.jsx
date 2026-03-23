@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {
   ArrowRight,
   CheckCircle2,
+  CircleHelp,
   FileImage,
   FileText,
   LockKeyhole,
@@ -12,6 +13,7 @@ import {
   ShieldCheck,
   Sparkles,
   Volume2,
+  X,
 } from "lucide-react";
 
 import { completeStage } from "../../../app/store/slices/appSlice";
@@ -266,7 +268,9 @@ export const Stage1945MemoryRoom = ({
   const [turnCount, setTurnCount] = useState(0);
   const [isResolving, setIsResolving] = useState(false);
   const [morseInputs, setMorseInputs] = useState(() =>
-    Object.fromEntries(STAGE_1945_MORSE_PUZZLES.map((puzzle) => [puzzle.id, ""])),
+    Object.fromEntries(
+      STAGE_1945_MORSE_PUZZLES.map((puzzle) => [puzzle.id, ""]),
+    ),
   );
   const [morseFeedback, setMorseFeedback] = useState({});
   const [solvedMorseIds, setSolvedMorseIds] = useState([]);
@@ -279,6 +283,7 @@ export const Stage1945MemoryRoom = ({
   const [failedPairCount, setFailedPairCount] = useState(0);
   const [memoryBoardNotice, setMemoryBoardNotice] = useState("");
   const [showCompletionNotice, setShowCompletionNotice] = useState(false);
+  const [showMorseHint, setShowMorseHint] = useState(false);
   const resolveTimeoutRef = useRef(null);
   const audioContextRef = useRef(null);
   const hasCompletedStageRef = useRef(false);
@@ -312,8 +317,7 @@ export const Stage1945MemoryRoom = ({
   const isKeywordPlacementComplete = STAGE_1945_KEYWORD_TARGETS.every(
     (milestone) => slotAssignments[milestone.id] === milestone.morsePuzzle.id,
   );
-  const isMemoryComplete =
-    isMemoryPairsComplete && isKeywordPlacementComplete;
+  const isMemoryComplete = isMemoryPairsComplete && isKeywordPlacementComplete;
   const isRoomTwoComplete = isMorseComplete && isMemoryComplete;
   const remainingMissCount = maxMemoryMisses - failedPairCount;
 
@@ -337,10 +341,7 @@ export const Stage1945MemoryRoom = ({
     return slotAssignments[milestone.id] === milestone.morsePuzzle.id;
   };
 
-  const resetMemoryBoard = ({
-    notice = "",
-    resetTurns = true,
-  } = {}) => {
+  const resetMemoryBoard = ({ notice = "", resetTurns = true } = {}) => {
     setDeck(createShuffledStage1945Deck());
     setMatchedPairIds([]);
     setFailedPairCount(0);
@@ -366,7 +367,9 @@ export const Stage1945MemoryRoom = ({
     setTurnCount(0);
     setIsResolving(false);
     setMorseInputs(
-      Object.fromEntries(STAGE_1945_MORSE_PUZZLES.map((puzzle) => [puzzle.id, ""])),
+      Object.fromEntries(
+        STAGE_1945_MORSE_PUZZLES.map((puzzle) => [puzzle.id, ""]),
+      ),
     );
     setMorseFeedback({});
     setSolvedMorseIds([]);
@@ -377,6 +380,7 @@ export const Stage1945MemoryRoom = ({
     setFailedPairCount(0);
     setMemoryBoardNotice("");
     setShowCompletionNotice(false);
+    setShowMorseHint(false);
     hasCompletedStageRef.current = false;
     hasCelebratedStageRef.current = false;
   };
@@ -477,7 +481,8 @@ export const Stage1945MemoryRoom = ({
 
   const getPuzzleState = (puzzle, index) => {
     const isSolved = solvedMorseIds.includes(puzzle.id);
-    const previousPuzzle = index > 0 ? STAGE_1945_MORSE_PUZZLES[index - 1] : null;
+    const previousPuzzle =
+      index > 0 ? STAGE_1945_MORSE_PUZZLES[index - 1] : null;
     const previousSolved =
       index === 0 || solvedMorseIds.includes(previousPuzzle.id);
 
@@ -610,7 +615,9 @@ export const Stage1945MemoryRoom = ({
       return;
     }
 
-    setSelectedKeywordId((currentId) => (currentId === puzzleId ? "" : puzzleId));
+    setSelectedKeywordId((currentId) =>
+      currentId === puzzleId ? "" : puzzleId,
+    );
   };
 
   const handleKeywordTokenDragStart = (event, puzzleId) => {
@@ -895,7 +902,8 @@ export const Stage1945MemoryRoom = ({
                           size="sm"
                           type="button"
                           disabled={
-                            !puzzleState.isReady || playingPuzzleId === puzzle.id
+                            !puzzleState.isReady ||
+                            playingPuzzleId === puzzle.id
                           }
                           onClick={() =>
                             handlePlaySignal(puzzle.id, puzzle.signal)
@@ -1085,7 +1093,10 @@ export const Stage1945MemoryRoom = ({
                 </div>
               )}
 
-              <div className="mt-5 stage-1945-card-grid" aria-busy={isResolving}>
+              <div
+                className="mt-5 stage-1945-card-grid"
+                aria-busy={isResolving}
+              >
                 {deck.map((card) => {
                   const milestone = getStage1945Milestone(card.pairId);
 
@@ -1129,7 +1140,10 @@ export const Stage1945MemoryRoom = ({
                           }
                         >
                           <span className="stage-1945-card__seal" aria-hidden />
-                          <span className="stage-1945-card__crosshair" aria-hidden />
+                          <span
+                            className="stage-1945-card__crosshair"
+                            aria-hidden
+                          />
                           <span className="stage-1945-card__label">
                             Hồ sơ 1945
                           </span>
@@ -1235,8 +1249,8 @@ export const Stage1945MemoryRoom = ({
                 </div>
 
                 <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                  Kéo trực tiếp một từ khóa vào ô khuyết trên thẻ thông tin, hoặc
-                  chạm để chọn rồi chạm vào ô cần điền.
+                  Kéo trực tiếp một từ khóa vào ô khuyết trên thẻ thông tin,
+                  hoặc chạm để chọn rồi chạm vào ô cần điền.
                 </p>
 
                 <div className="mt-5 flex flex-wrap gap-3">
@@ -1328,7 +1342,8 @@ export const Stage1945MemoryRoom = ({
                       Sai cặp còn lại
                     </p>
                     <p className="mt-2 text-lg font-semibold text-foreground">
-                      {remainingMissCount} lượt trước khi board tự đóng và xáo lại
+                      {remainingMissCount} lượt trước khi board tự đóng và xáo
+                      lại
                     </p>
                   </div>
                 </div>
@@ -1448,6 +1463,58 @@ export const Stage1945MemoryRoom = ({
               </Button>
             </div>
           </article>
+        </div>
+      )}
+
+      {isViewingMorse && !showMorseHint && (
+        <button
+          type="button"
+          className="fixed bottom-6 right-6 z-[90] inline-flex items-center gap-2 rounded-full border border-cyan-300/35 bg-cyan-300/12 px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-cyan-100 shadow-[0_12px_24px_rgb(0_0_0_/_0.35)] transition hover:bg-cyan-300/20"
+          onClick={() => setShowMorseHint(true)}
+          aria-label="Mở bảng mã Morse"
+        >
+          <CircleHelp className="size-4" />
+          Bảng mã Morse
+        </button>
+      )}
+
+      {showMorseHint && (
+        <div
+          className="fixed inset-0 z-[95] flex items-center justify-center bg-black/60 p-4 backdrop-blur-[2px]"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Bảng mã Morse"
+        >
+          <div className="w-full max-w-3xl rounded-2xl border border-border/80 bg-[linear-gradient(145deg,rgba(15,21,31,0.98),rgba(9,13,20,0.98))] p-5 shadow-[0_22px_48px_rgb(0_0_0_/_0.35)]">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[0.68rem] uppercase tracking-[0.18em] text-muted-foreground">
+                  Hint
+                </p>
+                <h3 className="mt-2 text-2xl font-bold tracking-tight text-foreground">
+                  Bảng mã Morse
+                </h3>
+              </div>
+
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => setShowMorseHint(false)}
+              >
+                <X className="size-4" />
+                Đóng
+              </Button>
+            </div>
+
+            <div className="mt-5 rounded-xl border border-border/65 bg-white p-3">
+              <img
+                src="/bang_morse.png"
+                alt="Bảng mã Morse quốc tế"
+                className="mx-auto w-full max-w-[40rem] rounded-md bg-white object-contain"
+              />
+            </div>
+          </div>
         </div>
       )}
     </section>
