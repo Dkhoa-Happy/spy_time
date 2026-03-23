@@ -60,6 +60,7 @@ const FragmentPuzzlePage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [notification, setNotification] = useState(null);
+  const [rejectedFragmentId, setRejectedFragmentId] = useState(null);
   const gameRef = useRef(null);
   const SNAP_DISTANCE = 95;
 
@@ -99,23 +100,15 @@ const FragmentPuzzlePage = () => {
     if (draggedId === null) return;
 
     const draggedFragment = fragments.find((f) => f.id === draggedId);
-    const distance = Math.sqrt(
-      Math.pow(draggedFragment.currentPos.x - draggedFragment.targetPos.x, 2) +
-        Math.pow(draggedFragment.currentPos.y - draggedFragment.targetPos.y, 2),
-    );
 
-    if (distance < SNAP_DISTANCE) {
-      setFragments((prev) =>
-        prev.map((frag) =>
-          frag.id === draggedId
-            ? {
-                ...frag,
-                currentPos: { ...frag.targetPos },
-                aligned: true,
-                rotation: 0,
-              }
-            : frag,
-        ),
+    // Find nearest target slot to current position
+    let nearestSlot = null;
+    let minDistance = SNAP_DISTANCE;
+
+    fragments.forEach((frag) => {
+      const distance = Math.sqrt(
+        Math.pow(draggedFragment.currentPos.x - frag.targetPos.x, 2) +
+          Math.pow(draggedFragment.currentPos.y - frag.targetPos.y, 2),
       );
     } else {
       // Kick back to initial position with bounce animation
@@ -153,6 +146,7 @@ const FragmentPuzzlePage = () => {
     // Only CỬU LONG (HONG KONG) - but not revealed on screen
     if (
       upperInput === "CỬU LONG" ||
+      upperInput === "CUU LONG" ||
       upperInput === "CUULONG" ||
       upperInput === "HONG KONG" ||
       upperInput === "HONGKONG"
@@ -178,6 +172,11 @@ const FragmentPuzzlePage = () => {
   };
 
   const closeNotification = () => {
+    if (notification?.type === "success") {
+      setTimeout(() => {
+        navigate(ROUTES.stage1945);
+      }, 300);
+    }
     setNotification(null);
   };
 
