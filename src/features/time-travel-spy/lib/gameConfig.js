@@ -11,7 +11,7 @@ export const ROOM_TITLES = {
 };
 
 export const ROOM_ROUTES = {
-  1: "/room-1930",
+  1: "/fragment-puzzle",
   2: "/room-1945",
   3: "/room-1986",
 };
