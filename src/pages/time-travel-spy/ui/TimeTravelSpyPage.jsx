@@ -7,9 +7,13 @@ import { ROUTES } from "../../../shared/constants/routes";
 import { Button } from "../../../shared/ui/button";
 import {
   ROOM_TITLES,
+  getStageIncorrectMessage,
+  getStageLockedMessage,
   isCorrectPassword,
+  isStage1986ToolsetReady,
 } from "../../../features/time-travel-spy/lib/gameConfig";
 import { Stage1945MemoryRoom } from "../../../features/time-travel-spy/ui/Stage1945MemoryRoom";
+import { Stage1975FarmDefenseRoom } from "../../../features/time-travel-spy/ui/Stage1975FarmDefenseRoom";
 import { Stage1986Notebook } from "../../../features/time-travel-spy/ui/Stage1986Notebook";
 
 const initialFlashlight = {
@@ -18,47 +22,21 @@ const initialFlashlight = {
   active: false,
 };
 
-const getNextRoute = (stage) => {
-  if (stage === 1) {
-    return ROUTES.stage1945;
-  }
-  if (stage === 2) {
-    return ROUTES.stage1986Prep;
-  }
-
-  if (stage === 3) {
-    return ROUTES.missionComplete;
-  }
-
-  return ROUTES.missionComplete;
-};
-
-const getPreviousRoute = (stage) => {
-  if (stage === 3) {
-    return ROUTES.stage1986Prep;
-  }
-
-  if (stage === 2) {
-    return ROUTES.stage1930;
-  }
-
-  return ROUTES.home;
-};
-
-const getLockedMessage = (stage) => {
-  if (stage === 2) {
-    return "Bạn cần giải phòng 1930 trước khi tiếp cận 1945.";
-  }
-
-  return "Bạn cần giải phòng 1945 trước khi vào manh mối 1986.";
-};
-
-const getIncorrectMessage = (stage) => {
-  if (stage === 3) {
-    return "Sai mật lệnh. Hãy ghép lại theo số đại hội, thời điểm diễn ra và chữ cái đầu của cụm khóa.";
-  }
-
-  return "Sai mật khẩu. Thử lại như một điệp viên thực thụ.";
+const STAGE_PAGE_CONFIG = {
+  1: {
+    nextRoute: ROUTES.stage1945,
+    previousRoute: ROUTES.home,
+  },
+  2: {
+    previousRoute: ROUTES.stage1930,
+  },
+  3: {
+    previousRoute: ROUTES.stage1945,
+  },
+  4: {
+    nextRoute: ROUTES.missionComplete,
+    previousRoute: ROUTES.stage1986Prep,
+  },
 };
 
 export const TimeTravelSpyPage = ({ activeStage }) => {
@@ -66,16 +44,11 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
   const navigate = useNavigate();
   const gameState = useSelector((state) => state.app.game);
   const unlockedStage = gameState?.unlockedStage ?? 1;
-  const stage3PrepCompleted = Boolean(gameState?.stage3PrepCompleted);
-  const inventory = gameState?.inventory ?? {
-    uvLight: false,
-    fieldNotebook: false,
-  };
+  const activeStageConfig = STAGE_PAGE_CONFIG[activeStage] ?? STAGE_PAGE_CONFIG[4];
 
   const [answers, setAnswers] = useState({
     1: "",
-    2: "",
-    3: "",
+    4: "",
   });
   const [notification, setNotification] = useState({
     kind: "idle",
@@ -109,7 +82,7 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
     if (stage > unlockedStage) {
       setNotification({
         kind: "error",
-        message: getLockedMessage(stage),
+        message: getStageLockedMessage(stage),
       });
       return;
     }
@@ -118,7 +91,7 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
     if (!isCorrectPassword(stage, answer)) {
       setNotification({
         kind: "error",
-        message: getIncorrectMessage(stage),
+        message: getStageIncorrectMessage(stage),
       });
       return;
     }
@@ -130,7 +103,7 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
     });
 
     window.setTimeout(() => {
-      navigate(getNextRoute(stage));
+      navigate(STAGE_PAGE_CONFIG[stage]?.nextRoute ?? ROUTES.missionComplete);
     }, 550);
   };
 
@@ -146,15 +119,14 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
     });
   };
 
-  const renderRoom1930 = activeStage === 1;
   const renderRoom1945 = activeStage === 2;
-  const renderRoom1986 = activeStage === 3;
-  const canAccessStage1986Tools =
-    stage3PrepCompleted && inventory.uvLight && inventory.fieldNotebook;
-  const showPageHeader = !renderRoom1945;
+  const renderRoom1975 = activeStage === 3;
+  const renderRoom1986 = activeStage === 4;
+  const canAccessStage1986Tools = isStage1986ToolsetReady(gameState);
+  const showPageHeader = !(renderRoom1945 || renderRoom1975);
 
   const handleBackToPreviousStage = () => {
-    navigate(getPreviousRoute(activeStage));
+    navigate(activeStageConfig.previousRoute ?? ROUTES.home);
   };
 
   return (
@@ -194,44 +166,23 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
         </p>
       )}
 
-      <article className={renderRoom1930 ? "space-y-4" : "hidden"}>
-        <div className="rounded-xl border border-border bg-surface p-6">
-          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-            Puzzle Area
-          </p>
-          <p className="mt-3 text-sm text-foreground/90">
-            Hồ sơ mật năm 1930 đã bị mã hóa bằng một con số lịch sử trùng với
-            năm sự kiện. Hãy nhập mật khẩu để mở cửa.
-          </p>
-        </div>
-
-        <form
-          className="grid gap-3 rounded-xl border border-border bg-surface p-6"
-          onSubmit={(event) => handleSubmit(event, 1)}
-        >
-          <label
-            className="text-xs uppercase tracking-[0.2em] text-muted-foreground"
-            htmlFor="room-1-password"
-          >
-            Password
-          </label>
-          <input
-            id="room-1-password"
-            className="h-11 rounded-md border border-border bg-background px-3 text-sm text-foreground outline-none transition focus:border-brand"
-            value={answers[1]}
-            onChange={(event) => updateAnswer(1, event.target.value)}
-            placeholder="Nhập mật khẩu phòng 1930"
-            autoComplete="off"
-          />
-          <Button type="submit">Xác nhận phòng 1930</Button>
-        </form>
-      </article>
-
       <article className={renderRoom1945 ? "space-y-4" : "hidden"}>
         <Stage1945MemoryRoom
           stageTitle={ROOM_TITLES[activeStage]}
           stageDescription="Giải mật mã đúng thứ tự để giữ nguyên dòng thời gian lịch sử."
           onBack={handleBackToPreviousStage}
+        />
+      </article>
+
+      <article className={renderRoom1975 ? "space-y-4" : "hidden"}>
+        <Stage1975FarmDefenseRoom
+          stageTitle={ROOM_TITLES[activeStage]}
+          stageDescription="Xây hậu phương, giữ hàng rào và sống sót qua 10 wave để mở đường tới hồ sơ 1986."
+          onBack={handleBackToPreviousStage}
+          onComplete={() => {
+            dispatch(completeStage(3));
+            navigate(ROUTES.stage1986Prep);
+          }}
         />
       </article>
 
@@ -244,7 +195,7 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
           {!canAccessStage1986Tools && (
             <div className="mt-4 grid gap-3 rounded-xl border border-brand/35 bg-brand/10 p-4 text-sm text-orange-100">
               <p className="font-semibold tracking-tight">
-                Màn 3 đang khóa công cụ hỗ trợ.
+                Màn 4 đang khóa công cụ hỗ trợ.
               </p>
               <p>
                 Bạn cần hoàn tất màn bản đồ chuẩn bị để tìm đèn UV và cuốn nhật
@@ -263,9 +214,9 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
 
           {canAccessStage1986Tools && (
             <Stage1986Notebook
-              answer={answers[3]}
-              onAnswerChange={(value) => updateAnswer(3, value)}
-              onSubmit={(event) => handleSubmit(event, 3)}
+              answer={answers[4]}
+              onAnswerChange={(value) => updateAnswer(4, value)}
+              onSubmit={(event) => handleSubmit(event, 4)}
               isUvEnabled={isUvEnabled}
               onToggleUv={() => setIsUvEnabled((prev) => !prev)}
               flashlight={flashlight}

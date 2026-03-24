@@ -1,37 +1,19 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Compass, RefreshCw } from "lucide-react";
+import { Compass } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
+import { completeStage } from "../../../app/store/slices/appSlice";
 import {
-  completeStage,
-  incrementMissionCounter,
-  resetMissionCounter,
-} from "../../../app/store/slices/appSlice";
+  TOTAL_STAGE_COUNT,
+  getResumeRoute,
+} from "../../../features/time-travel-spy/lib/gameConfig";
 import { Button } from "../../../shared/ui/button";
 import { ROUTES } from "../../../shared/constants/routes";
-
-const getResumeRoute = (game) => {
-  if (game.missionCompleted) {
-    return ROUTES.missionComplete;
-  }
-
-  if (game.unlockedStage >= 3) {
-    return ROUTES.stage1986;
-  }
-
-  if (game.unlockedStage === 2) {
-    return ROUTES.stage1945;
-  }
-
-  return ROUTES.stage1930;
-};
 
 export const HomePage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { projectName, missionCounter, game } = useSelector(
-    (state) => state.app,
-  );
+  const { projectName, game } = useSelector((state) => state.app);
   const resumeRoute = getResumeRoute(game);
   const hasProgress =
     game.completedStages.length > 0 ||
@@ -41,7 +23,7 @@ export const HomePage = () => {
   const unlockToStageThreeForTesting = () => {
     dispatch(completeStage(1));
     dispatch(completeStage(2));
-    navigate(ROUTES.stage1986);
+    navigate(ROUTES.stage1975);
   };
 
   return (
@@ -55,7 +37,7 @@ export const HomePage = () => {
         </h2>
         <p className="mt-4 max-w-xl text-sm text-muted-foreground">
           Bạn vào vai điệp viên xuyên thời gian. Giải mã từng căn phòng lịch sử
-          để mở khóa sự kiện then chốt 1930, 1945 và 1986.
+          để mở khóa các mốc then chốt 1930, 1945, 1975 và 1986.
         </p>
 
         <div className="mt-8 flex flex-wrap gap-3">
@@ -79,7 +61,7 @@ export const HomePage = () => {
 
         <p className="mt-5 text-sm text-muted-foreground">Phòng đã mở khóa</p>
         <p className="mt-1 tracking-tighter text-4xl font-bold text-foreground">
-          {game.unlockedStage}/3
+          {game.unlockedStage}/{TOTAL_STAGE_COUNT}
         </p>
       </aside>
     </section>

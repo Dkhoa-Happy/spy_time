@@ -32,7 +32,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: ROUTES.stage1986,
+        path: ROUTES.stage1975,
         element: (
           <StageGuard requiredStage={3}>
             <TimeTravelSpyPage activeStage={3} />
@@ -40,9 +40,17 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: ROUTES.stage1986,
+        element: (
+          <StageGuard requiredStage={4}>
+            <TimeTravelSpyPage activeStage={4} />
+          </StageGuard>
+        ),
+      },
+      {
         path: ROUTES.stage1986Prep,
         element: (
-          <StageGuard requiredStage={3}>
+          <StageGuard requiredStage={4}>
             <Stage1986PrepMapPage />
           </StageGuard>
         ),

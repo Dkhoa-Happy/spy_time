@@ -7,7 +7,7 @@ const initialState = {
     unlockedStage: 1,
     completedStages: [],
     missionCompleted: false,
-    stage3PrepCompleted: false,
+    stage1986PrepCompleted: false,
     inventory: {
       uvLight: false,
       fieldNotebook: false,
@@ -28,7 +28,7 @@ const appSlice = createSlice({
     completeStage: (state, action) => {
       const stage = Number(action.payload);
 
-      if (![1, 2, 3].includes(stage)) {
+      if (![1, 2, 3, 4].includes(stage)) {
         return;
       }
 
@@ -36,19 +36,19 @@ const appSlice = createSlice({
         state.game.completedStages.push(stage);
       }
 
-      if (stage < 3) {
+      if (stage < 4) {
         state.game.unlockedStage = Math.max(
           state.game.unlockedStage,
           stage + 1,
         );
       }
 
-      if (stage === 3) {
+      if (stage === 4) {
         state.game.missionCompleted = true;
       }
     },
-    completeStage3Prep: (state) => {
-      state.game.stage3PrepCompleted = true;
+    completeStage1986Prep: (state) => {
+      state.game.stage1986PrepCompleted = true;
       if (!state.game.inventory || typeof state.game.inventory !== "object") {
         state.game.inventory = {
           uvLight: false,
@@ -57,9 +57,9 @@ const appSlice = createSlice({
       }
       state.game.inventory.uvLight = true;
       state.game.inventory.fieldNotebook = true;
-      state.game.unlockedStage = Math.max(state.game.unlockedStage, 3);
+      state.game.unlockedStage = Math.max(state.game.unlockedStage, 4);
     },
-    collectStage3Item: (state, action) => {
+    collectStage1986Item: (state, action) => {
       const itemKey = String(action.payload || "");
 
       if (!state.game.inventory || typeof state.game.inventory !== "object") {
@@ -80,7 +80,7 @@ const appSlice = createSlice({
         unlockedStage: 1,
         completedStages: [],
         missionCompleted: false,
-        stage3PrepCompleted: false,
+        stage1986PrepCompleted: false,
         inventory: {
           uvLight: false,
           fieldNotebook: false,
@@ -94,8 +94,8 @@ export const {
   incrementMissionCounter,
   resetMissionCounter,
   completeStage,
-  collectStage3Item,
-  completeStage3Prep,
+  collectStage1986Item,
+  completeStage1986Prep,
   restartGame,
 } = appSlice.actions;
 export default appSlice.reducer;

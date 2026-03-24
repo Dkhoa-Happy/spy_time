@@ -20,6 +20,7 @@ import { completeStage } from "../../../app/store/slices/appSlice";
 import { ROUTES } from "../../../shared/constants/routes";
 import { cn } from "../../../shared/lib/utils";
 import { Button } from "../../../shared/ui/button";
+import { AdventureStoryOverlay } from "./AdventureStoryOverlay";
 import { normalizeAnswer } from "../lib/gameConfig";
 import {
   createShuffledStage1945Deck,
@@ -282,12 +283,10 @@ export const Stage1945MemoryRoom = ({
   const [selectedKeywordId, setSelectedKeywordId] = useState("");
   const [failedPairCount, setFailedPairCount] = useState(0);
   const [memoryBoardNotice, setMemoryBoardNotice] = useState("");
-  const [showCompletionNotice, setShowCompletionNotice] = useState(false);
   const [showMorseHint, setShowMorseHint] = useState(false);
   const resolveTimeoutRef = useRef(null);
   const audioContextRef = useRef(null);
   const hasCompletedStageRef = useRef(false);
-  const hasCelebratedStageRef = useRef(false);
 
   useEffect(() => {
     return () => {
@@ -320,15 +319,6 @@ export const Stage1945MemoryRoom = ({
   const isMemoryComplete = isMemoryPairsComplete && isKeywordPlacementComplete;
   const isRoomTwoComplete = isMorseComplete && isMemoryComplete;
   const remainingMissCount = maxMemoryMisses - failedPairCount;
-
-  useEffect(() => {
-    if (!isRoomTwoComplete || hasCelebratedStageRef.current) {
-      return;
-    }
-
-    hasCelebratedStageRef.current = true;
-    setShowCompletionNotice(true);
-  }, [isRoomTwoComplete]);
 
   const getAssignedPuzzle = (milestone) =>
     morsePuzzleLookup[slotAssignments[milestone.id]] || null;
@@ -379,10 +369,8 @@ export const Stage1945MemoryRoom = ({
     setSelectedKeywordId("");
     setFailedPairCount(0);
     setMemoryBoardNotice("");
-    setShowCompletionNotice(false);
     setShowMorseHint(false);
     hasCompletedStageRef.current = false;
-    hasCelebratedStageRef.current = false;
   };
 
   const handleConfirmStageTwoCompletion = () => {
@@ -390,9 +378,7 @@ export const Stage1945MemoryRoom = ({
       dispatch(completeStage(2));
       hasCompletedStageRef.current = true;
     }
-
-    setShowCompletionNotice(false);
-    navigate(ROUTES.stage1986);
+    navigate(ROUTES.stage1975);
   };
 
   const handleCardFlip = (cardId) => {
@@ -683,7 +669,7 @@ export const Stage1945MemoryRoom = ({
   };
 
   const roomStatus = isRoomTwoComplete
-    ? "Chờ xác nhận sang Room 3"
+    ? "Chờ xác nhận sang Room 3 / 1975"
     : isMorseComplete
       ? "Đang ở Game 2"
       : "Đang ở Game 1";
@@ -1226,7 +1212,7 @@ export const Stage1945MemoryRoom = ({
                   </h4>
                   <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">
                     Cả 6 cặp thẻ và 3 từ khóa đều đã đúng. Xác nhận hoàn tất ải
-                    2 để mở sang room 1986.
+                    2 để mở sang room 1975.
                   </p>
                 </div>
               )}
@@ -1352,7 +1338,7 @@ export const Stage1945MemoryRoom = ({
                   <p className="inline-flex items-center gap-2 text-sm font-semibold text-foreground">
                     <ShieldCheck className="size-4 text-cyan-300" />
                     {isMemoryComplete
-                      ? "Room 2 đã sẵn sàng mở room 1986"
+                      ? "Room 2 đã sẵn sàng mở room 1975"
                       : "Tiếp tục ghép thẻ và điền từ khóa"}
                   </p>
                 </div>
@@ -1378,19 +1364,19 @@ export const Stage1945MemoryRoom = ({
                 </p>
                 <p className="mt-2 text-lg font-semibold text-foreground">
                   {isRoomTwoComplete
-                    ? "Toàn bộ room 2 đã hoàn tất. Xác nhận để chuyển sang room 1986."
-                    : "Hoàn tất đủ 6 cặp và điền đúng toàn bộ từ khóa để mở sang room 1986."}
+                    ? "Toàn bộ room 2 đã hoàn tất. Xác nhận để chuyển sang room 1975."
+                    : "Hoàn tất đủ 6 cặp và điền đúng toàn bộ từ khóa để mở sang room 1975."}
                 </p>
               </div>
 
               {isRoomTwoComplete ? (
                 <Button onClick={handleConfirmStageTwoCompletion}>
-                  Xác nhận sang room 1986
+                  Xác nhận sang room 1975
                   <ArrowRight className="size-4" />
                 </Button>
               ) : (
                 <Button variant="secondary" disabled>
-                  Chưa mở room 1986
+                  Chưa mở room 1975
                   <ArrowRight className="size-4" />
                 </Button>
               )}
@@ -1399,71 +1385,27 @@ export const Stage1945MemoryRoom = ({
         </>
       )}
 
-      {showCompletionNotice && isRoomTwoComplete && (
-        <div
-          className="stage-1945-completion"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="stage-1945-completion-title"
-        >
-          <div className="stage-1945-completion__fireworks" aria-hidden>
-            <span className="stage-1945-firework stage-1945-firework--1" />
-            <span className="stage-1945-firework stage-1945-firework--2" />
-            <span className="stage-1945-firework stage-1945-firework--3" />
-            <span className="stage-1945-firework stage-1945-firework--4" />
-            <span className="stage-1945-firework stage-1945-firework--5" />
-            <span className="stage-1945-firework stage-1945-firework--6" />
-          </div>
-
-          <article className="stage-1945-completion__paper">
-            <span className="stage-1945-completion__stamp">Hoàn tất ải 2</span>
-            <p className="text-[0.74rem] uppercase tracking-[0.28em] text-[#7b5a33]">
-              Biên bản xác nhận
-            </p>
-            <h3
-              id="stage-1945-completion-title"
-              className="mt-4 text-3xl font-bold tracking-tight text-[#2d1e10]"
-            >
-              Hồ sơ 1945 đã được khép lại
-            </h3>
-            <p className="mt-4 text-sm leading-7 text-[#4a331c]">
-              Bạn đã giải đúng toàn bộ mật thư Morse, ghép xong 6 cặp thẻ và
-              điền đủ các từ khóa còn thiếu. Room 2 đã hoàn tất và sẵn sàng mở
-              sang màn 3.
-            </p>
-
-            <div className="stage-1945-completion__metrics">
-              <div className="stage-1945-completion__metric">
-                <span className="stage-1945-completion__metricLabel">
-                  Mật thư
-                </span>
-                <strong>3 / 3</strong>
-              </div>
-              <div className="stage-1945-completion__metric">
-                <span className="stage-1945-completion__metricLabel">
-                  Cặp thẻ
-                </span>
-                <strong>6 / 6</strong>
-              </div>
-              <div className="stage-1945-completion__metric">
-                <span className="stage-1945-completion__metricLabel">
-                  Từ khóa
-                </span>
-                <strong>
-                  {STAGE_1945_KEYWORD_TARGETS.length} /{" "}
-                  {STAGE_1945_KEYWORD_TARGETS.length}
-                </strong>
-              </div>
-            </div>
-
-            <div className="mt-6 flex justify-end">
-              <Button onClick={handleConfirmStageTwoCompletion}>
-                Xác nhận và sang màn 3
-                <ArrowRight className="size-4" />
-              </Button>
-            </div>
-          </article>
-        </div>
+      {isRoomTwoComplete && (
+        <AdventureStoryOverlay
+          theme="parchment"
+          badge="Hoàn tất ải 2"
+          eyebrow="Biên bản xác nhận"
+          title="Hồ sơ 1945 đã được khép lại"
+          description="Bạn đã giải đúng toàn bộ mật thư Morse, ghép xong 6 cặp thẻ và điền đủ các từ khóa còn thiếu. Room 2 đã hoàn tất và sẵn sàng mở sang màn 1975."
+          progressLabel="2 / 4 room hoàn tất • Room 3 đã mở"
+          progressValue={0.5}
+          metrics={[
+            { label: "Mật thư", value: "3 / 3" },
+            { label: "Cặp thẻ", value: "6 / 6" },
+            {
+              label: "Từ khóa",
+              value: `${STAGE_1945_KEYWORD_TARGETS.length} / ${STAGE_1945_KEYWORD_TARGETS.length}`,
+            },
+          ]}
+          actionLabel="Xác nhận và sang màn 1975"
+          onAction={handleConfirmStageTwoCompletion}
+          actionIcon={ArrowRight}
+        />
       )}
 
       {isViewingMorse && !showMorseHint && (

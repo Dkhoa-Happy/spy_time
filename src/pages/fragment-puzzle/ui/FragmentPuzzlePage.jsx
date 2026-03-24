@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import "../styles/FragmentPuzzle.css";
 import { completeStage } from "../../../app/store/slices/appSlice";
+import { getResumeRoute } from "../../../features/time-travel-spy/lib/gameConfig";
 import { ROUTES } from "@/shared/constants/routes";
 
 const getFragmentRotation = (fragmentId) =>
@@ -28,22 +29,6 @@ const getBurstOffset = (fragmentId) => {
   };
 
   return offsets[fragmentId] ?? { x: 0, y: 0 };
-};
-
-const getResumeRoute = (game) => {
-  if (game.missionCompleted) {
-    return ROUTES.missionComplete;
-  }
-
-  if (game.unlockedStage >= 3) {
-    return ROUTES.stage1986;
-  }
-
-  if (game.unlockedStage === 2) {
-    return ROUTES.stage1945;
-  }
-
-  return ROUTES.home;
 };
 
 const getResponsiveLayout = (viewportWidth) => {
@@ -232,7 +217,7 @@ const FragmentPuzzlePage = () => {
   const [canvasWidth, setCanvasWidth] = useState(980);
   const SNAP_DISTANCE = 95;
   const resumeRoute = getResumeRoute(game);
-  const canReturnToCurrentStage = game.completedStages.includes(2);
+  const canReturnToCurrentStage = game.unlockedStage > 1 || game.missionCompleted;
 
   useEffect(() => {
     const handleResize = () => {
