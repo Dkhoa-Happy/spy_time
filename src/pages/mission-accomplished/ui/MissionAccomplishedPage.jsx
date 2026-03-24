@@ -1,4 +1,10 @@
-import { CheckCircle2, RefreshCw, ShieldCheck, Sparkles, Trophy } from "lucide-react";
+import {
+  CheckCircle2,
+  RefreshCw,
+  ShieldCheck,
+  Sparkles,
+  Trophy,
+} from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 
@@ -82,7 +88,8 @@ const STAGE_SUMMARY = [
     id: 3,
     year: "1986",
     title: "Đại hội VI và Đổi mới",
-    detail: "Giải mã thành công hồ sơ chuyển trục và khóa ổn định dòng thời gian.",
+    detail:
+      "Giải mã thành công hồ sơ chuyển trục và khóa ổn định dòng thời gian.",
   },
 ];
 
@@ -90,6 +97,11 @@ export const MissionAccomplishedPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { projectName, game } = useSelector((state) => state.app);
+  const keywordBag = game.inventory?.keywords ?? {
+    khoiNguon: false,
+    docLap: false,
+    doiMoi: false,
+  };
 
   if (!game.missionCompleted) {
     return <Navigate to={ROUTES.home} replace />;
@@ -153,9 +165,9 @@ export const MissionAccomplishedPage = () => {
                 Bạn đã giải án thành công toàn bộ 3 ải của {projectName}
               </h2>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
-                Chuỗi manh mối 1930, 1945 và 1986 đã được nối lại chính xác.
-                Hồ sơ lịch sử đã khép kín, mật lệnh cuối được xác thực và dòng
-                thời gian hiện ở trạng thái an toàn.
+                Chuỗi manh mối 1930, 1945 và 1986 đã được nối lại chính xác. Hồ
+                sơ lịch sử đã khép kín, mật lệnh cuối được xác thực và dòng thời
+                gian hiện ở trạng thái an toàn.
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3">
@@ -212,6 +224,72 @@ export const MissionAccomplishedPage = () => {
           </div>
         </div>
       </div>
+
+      <article className="rounded-2xl border border-border/80 bg-surface/80 p-5 shadow-[0_16px_35px_rgb(0_0_0_/_0.18)]">
+        <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+          Chỉ thị sau cùng
+        </p>
+        <h3 className="mt-2 text-2xl font-bold tracking-tight text-foreground">
+          Dùng đèn UV soi khắp website
+        </h3>
+        <p className="mt-2 text-sm leading-7 text-muted-foreground">
+          Đã hoàn thành 3 ải. Từ bây giờ, điệp viên bật chế độ UV Hunt ở góc
+          phải màn hình, di chuyển qua các trang và soi lớp nền để tìm chữ ẩn.
+          Khi thấy chữ phát sáng, bấm vào để thu hoạch vào túi đồ rồi ghi lại
+          trên giấy A4 của quản trò.
+        </p>
+
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          <div className="rounded-xl border border-border/70 bg-background/45 p-4">
+            <p className="text-[0.68rem] uppercase tracking-[0.15em] text-muted-foreground">
+              Stage 1 / 1930
+            </p>
+            <p className="mt-2 font-mono text-sm font-semibold uppercase tracking-[0.08em] text-foreground">
+              {keywordBag.khoiNguon ? "KHỞI NGUỒN / TỔ CHỨC" : "Chưa thu thập"}
+            </p>
+          </div>
+          <div className="rounded-xl border border-border/70 bg-background/45 p-4">
+            <p className="text-[0.68rem] uppercase tracking-[0.15em] text-muted-foreground">
+              Stage 2 / 1945
+            </p>
+            <p className="mt-2 font-mono text-sm font-semibold uppercase tracking-[0.08em] text-foreground">
+              {keywordBag.docLap ? "ĐỘC LẬP" : "Chưa thu thập"}
+            </p>
+          </div>
+          <div className="rounded-xl border border-border/70 bg-background/45 p-4">
+            <p className="text-[0.68rem] uppercase tracking-[0.15em] text-muted-foreground">
+              Stage 3 / 1986
+            </p>
+            <p className="mt-2 font-mono text-sm font-semibold uppercase tracking-[0.08em] text-foreground">
+              {keywordBag.doiMoi ? "ĐỔI MỚI" : "Chưa thu thập"}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-5 flex flex-wrap gap-3">
+          <Button
+            asChild
+            variant="secondary"
+            disabled={!game.completedStages.includes(1)}
+          >
+            <Link to={ROUTES.stage1930}>Quay lại room 1930</Link>
+          </Button>
+          <Button
+            asChild
+            variant="secondary"
+            disabled={!game.completedStages.includes(2)}
+          >
+            <Link to={ROUTES.stage1945}>Quay lại room 1945</Link>
+          </Button>
+          <Button
+            asChild
+            variant="secondary"
+            disabled={!game.completedStages.includes(3)}
+          >
+            <Link to={ROUTES.stage1986}>Quay lại room 1986</Link>
+          </Button>
+        </div>
+      </article>
 
       <div className="grid gap-4 lg:grid-cols-3">
         {STAGE_SUMMARY.map((stage) => {

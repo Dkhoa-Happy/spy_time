@@ -32,12 +32,20 @@ const sanitizeGameState = (value) => {
     value.missionCompleted === true || uniqueCompletedStages.includes(3);
 
   const stage3PrepCompleted = value.stage3PrepCompleted === true;
+  const uvHuntEnabled = value.uvHuntEnabled === true;
   const hasInventory = value.inventory && typeof value.inventory === "object";
   const inventory = {
     uvLight: Boolean(hasInventory ? value.inventory.uvLight : false),
     fieldNotebook: Boolean(
       hasInventory ? value.inventory.fieldNotebook : false,
     ),
+    keywords: {
+      khoiNguon: Boolean(
+        hasInventory ? value.inventory?.keywords?.khoiNguon : false,
+      ),
+      docLap: Boolean(hasInventory ? value.inventory?.keywords?.docLap : false),
+      doiMoi: Boolean(hasInventory ? value.inventory?.keywords?.doiMoi : false),
+    },
   };
 
   // Migrate legacy saves: if prep was completed, ensure both items are present.
@@ -51,6 +59,7 @@ const sanitizeGameState = (value) => {
     completedStages: uniqueCompletedStages,
     missionCompleted,
     stage3PrepCompleted,
+    uvHuntEnabled,
     inventory,
   };
 };

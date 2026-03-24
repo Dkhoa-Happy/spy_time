@@ -141,6 +141,7 @@ const NotebookSheet = ({
   onTouchStart,
   onTouchMove,
   onTouchEnd,
+  onCollectUvClue,
 }) => {
   const hasUvLayer = Boolean(page.uvClues?.length);
   const visibleSummaryTags =
@@ -312,6 +313,15 @@ const NotebookSheet = ({
             <span
               key={`${page.id}-${clue.text}`}
               className={`notebook-uv-clue notebook-uv-clue--${clue.tone} notebook-uv-clue--${clue.position}`}
+              onClick={() => onCollectUvClue?.(clue)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  onCollectUvClue?.(clue);
+                }
+              }}
             >
               {clue.text}
             </span>
@@ -361,12 +371,12 @@ export const Stage1986Notebook = ({
   const activePage = NOTEBOOK_PAGES[pageIndex];
   const targetPage = flipState ? NOTEBOOK_PAGES[flipState.to] : activePage;
 
-  const revealUvClues = () => {
-    if (!isUvEnabled || !activePage.uvClues?.length) {
+  const revealTagsFromClues = (clues) => {
+    if (!Array.isArray(clues) || clues.length === 0) {
       return;
     }
 
-    const discoveredTags = activePage.uvClues
+    const discoveredTags = clues
       .map((clue) => CLUE_TO_SUMMARY_TAG[normalizeClue(clue.text)])
       .filter(Boolean);
 
@@ -381,19 +391,35 @@ export const Stage1986Notebook = ({
     });
   };
 
+  const collectUvClue = (clue) => {
+    if (!isUvEnabled || !clue) {
+      return;
+    }
+
+    revealTagsFromClues([clue]);
+  };
+
+  const revealByScanning = () => {
+    if (!isUvEnabled || !activePage?.uvClues?.length) {
+      return;
+    }
+
+    revealTagsFromClues(activePage.uvClues);
+  };
+
   const handleMouseMove = (event) => {
     onMouseMove?.(event);
-    revealUvClues();
+    revealByScanning();
   };
 
   const handleTouchStart = (event) => {
     onTouchStart?.(event);
-    revealUvClues();
+    revealByScanning();
   };
 
   const handleTouchMove = (event) => {
     onTouchMove?.(event);
-    revealUvClues();
+    revealByScanning();
   };
 
   const turnPage = (nextDirection) => {
@@ -555,7 +581,7 @@ export const Stage1986Notebook = ({
         <div className="spy-dossier__briefMeta">
           <span>
             <ScanSearch className="size-4" />
-            Bật UV khi cần để soi lớp mực ẩn
+            Bật UV và rê đèn để tự động lộ mảnh ghép ẩn
           </span>
           <span>
             <ChevronRight className="size-4" />
@@ -598,6 +624,7 @@ export const Stage1986Notebook = ({
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={onTouchEnd}
+            onCollectUvClue={collectUvClue}
           />
 
           {flipState && (

@@ -1,5 +1,9 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { Flashlight } from "lucide-react";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 
+import { collectKeyword, toggleUvHunt } from "../store/slices/appSlice";
 import { ROUTES } from "../../shared/constants/routes";
 import { cn } from "../../shared/lib/utils";
 
@@ -10,8 +14,59 @@ const navLinkClass = ({ isActive }) =>
   );
 
 export const MainLayout = () => {
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const [pointer, setPointer] = useState({ x: 0, y: 0, active: false });
+  const game = useSelector((state) => state.app.game);
+  const keywordBag = game.inventory?.keywords ?? {
+    khoiNguon: false,
+    docLap: false,
+    doiMoi: false,
+  };
+
+  const UV_HUNT_CLUES = {
+    [ROUTES.stage1930]: [
+      {
+        id: "uv-khoi-nguon",
+        keywordKey: "khoiNguon",
+        text: "KHỞI NGUỒN",
+        style: { left: "13%", top: "25%" },
+      },
+    ],
+    [ROUTES.stage1945]: [
+      {
+        id: "uv-doc-lap",
+        keywordKey: "docLap",
+        text: "ĐỘC LẬP",
+        style: { right: "17%", top: "28%" },
+      },
+    ],
+    [ROUTES.stage1986]: [
+      {
+        id: "uv-doi-moi",
+        keywordKey: "doiMoi",
+        text: "ĐỔI MỚI",
+        style: { left: "49%", top: "67%" },
+      },
+    ],
+  };
+
+  const routeClues = UV_HUNT_CLUES[location.pathname] ?? [];
+  const showUvHuntControls = game.missionCompleted;
+
+  const hiddenMask =
+    game.uvHuntEnabled && pointer.active
+      ? `radial-gradient(circle 130px at ${pointer.x}px ${pointer.y}px, black 0%, black 58%, transparent 100%)`
+      : "radial-gradient(circle 0px at 0px 0px, transparent 100%, transparent 100%)";
+
   return (
-    <div className="relative min-h-screen overflow-hidden px-4 py-8 sm:px-8">
+    <div
+      className="relative min-h-screen overflow-hidden px-4 py-8 sm:px-8"
+      onMouseMove={(event) =>
+        setPointer({ x: event.clientX, y: event.clientY, active: true })
+      }
+      onMouseLeave={() => setPointer((prev) => ({ ...prev, active: false }))}
+    >
       <div
         className="pointer-events-none absolute inset-0 opacity-80"
         aria-hidden
@@ -20,6 +75,45 @@ export const MainLayout = () => {
         <div className="absolute right-0 top-12 h-80 w-80 rounded-full bg-cyan-300/8 blur-3xl" />
         <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-slate-950/40 to-transparent" />
       </div>
+
+      {showUvHuntControls && (
+        <>
+          <button
+            type="button"
+            className={`uv-hunt-toggle ${game.uvHuntEnabled ? "is-active" : ""}`}
+            onClick={() => dispatch(toggleUvHunt())}
+          >
+            <Flashlight className="size-4" />
+            {game.uvHuntEnabled ? "Tắt UV Hunt" : "Bật UV Hunt"}
+          </button>
+
+          {game.uvHuntEnabled && routeClues.length > 0 && (
+            <div
+              className="uv-hunt-overlay"
+              style={{
+                WebkitMaskImage: hiddenMask,
+                maskImage: hiddenMask,
+              }}
+            >
+              {routeClues.map((clue) => (
+                <button
+                  key={clue.id}
+                  type="button"
+                  className={`uv-hunt-clue ${
+                    keywordBag[clue.keywordKey] ? "is-collected" : ""
+                  }`}
+                  style={clue.style}
+                  onClick={() => dispatch(collectKeyword(clue.keywordKey))}
+                >
+                  {keywordBag[clue.keywordKey]
+                    ? `ĐÃ NHẶT: ${clue.text}`
+                    : `BẤM THU HOẠCH: ${clue.text}`}
+                </button>
+              ))}
+            </div>
+          )}
+        </>
+      )}
 
       <div className="relative mx-auto flex w-full max-w-[96rem] flex-col gap-8 rounded-[1.4rem] border border-border/70 bg-surface/82 p-6 shadow-[0_24px_70px_rgb(0_0_0_/_0.34)] backdrop-blur-xl md:p-10">
         <header className="flex flex-wrap items-center justify-between gap-4 border-b border-border/80 pb-4">

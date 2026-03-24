@@ -119,20 +119,17 @@ export const Stage1986PrepMapPage = () => {
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [activeMarkerId, setActiveMarkerId] = useState("");
 
-  const targetIds = useMemo(
-    () =>
-      new Set(
-        STAGE_1986_PREP_LOCATIONS.filter((location) => location.target).map(
-          (location) => location.id,
-        ),
-      ),
+  const targetSequence = useMemo(
+    () => STAGE_1986_PREP_LOCATIONS.filter((location) => location.target),
     [],
   );
-
   const pickedCount = pickedIds.size;
   const hasUvInBag = Boolean(inventory.uvLight);
   const hasNotebookInBag = Boolean(inventory.fieldNotebook);
   const showContinue = stage3PrepCompleted || hasNotebookInBag || isRevealDone;
+  const currentQuestion = showContinue
+    ? null
+    : (targetSequence[pickedIds.size] ?? null);
 
   const playFailureFeedback = () => {
     const shellNode = shellRef.current;
@@ -327,11 +324,15 @@ export const Stage1986PrepMapPage = () => {
       return;
     }
 
-    if (!targetIds.has(location.id)) {
+    if (!currentQuestion || location.id !== currentQuestion.id) {
       setActiveMarkerId("");
       setPickedIds(new Set());
       setStatusKind("error");
-      setStatusMessage(failLabel);
+      setStatusMessage(
+        currentQuestion
+          ? `${failLabel} Câu hiện tại yêu cầu địa điểm: ${currentQuestion.quizPrompt}`
+          : failLabel,
+      );
       playFailureFeedback();
       setIsErrorModalOpen(true);
       return;
@@ -373,7 +374,9 @@ export const Stage1986PrepMapPage = () => {
 
     setStatusKind("progress");
     setStatusMessage(
-      `Đúng tọa độ. Tiếp tục: ${nextPicked.size}/${STAGE_1986_PREP_TARGET_TOTAL} địa điểm.`,
+      nextPicked.size < STAGE_1986_PREP_TARGET_TOTAL
+        ? `Đúng tọa độ. Chuyển sang câu tiếp theo (${nextPicked.size}/${STAGE_1986_PREP_TARGET_TOTAL}).`
+        : "Đúng tọa độ cuối cùng. Đang hoàn tất cấp phát công cụ...",
     );
   };
 
@@ -385,7 +388,7 @@ export const Stage1986PrepMapPage = () => {
     setPickedIds(new Set());
     setStatusKind("idle");
     setStatusMessage(
-      "Vòng dò tìm đã làm mới. Hãy đối chiếu lại hồ sơ và chọn lại từ đầu.",
+      "Vòng dò tìm đã làm mới. Trả lời lại từ Câu 1 rồi chọn điểm tương ứng trên bản đồ.",
     );
   };
 
@@ -431,10 +434,20 @@ export const Stage1986PrepMapPage = () => {
             <p className="stage1986-prep__intelLabel">Intel Brief</p>
             <h3>Dữ liệu địa điểm đã bị rút tên riêng</h3>
             <span>
-              Chỉ còn marker nghi vấn trên bản đồ. Dựa vào kiến thức từ các ải
-              trước để xác thực từng điểm.
+              Hệ thống sẽ đưa từng câu hỏi địa danh. Trả lời câu hỏi bằng cách
+              bấm đúng một marker tương ứng trên bản đồ.
             </span>
           </div>
+
+          {!showContinue && currentQuestion && (
+            <div className="stage1986-prep__intelCard">
+              <p className="stage1986-prep__intelLabel">Câu hỏi hiện tại</p>
+              <h3>
+                {pickedCount + 1}/{STAGE_1986_PREP_TARGET_TOTAL}
+              </h3>
+              <span>{currentQuestion.quizPrompt}</span>
+            </div>
+          )}
 
           <div
             className={`stage1986-prep__status stage1986-prep__status--${statusKind}`}
@@ -551,7 +564,7 @@ export const Stage1986PrepMapPage = () => {
             Bản đồ truy vết địa điểm
           </p>
           <p className="stage1986-prep__mapHint">
-            Chỉ chọn các marker xuất hiện trong hồ sơ lịch sử qua các ải trước.
+            Đọc câu hỏi bên trái rồi chọn đúng một marker trả lời cho câu đó.
           </p>
 
           <div className="stage1986-prep__particles" aria-hidden>

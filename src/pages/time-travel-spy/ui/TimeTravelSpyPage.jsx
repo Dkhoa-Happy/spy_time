@@ -61,6 +61,9 @@ const getIncorrectMessage = (stage) => {
   return "Sai mật khẩu. Thử lại như một điệp viên thực thụ.";
 };
 
+const getSuccessMessage = () =>
+  "Xác nhận thành công. Đang mở khóa phòng tiếp theo...";
+
 export const TimeTravelSpyPage = ({ activeStage }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -70,6 +73,16 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
   const inventory = gameState?.inventory ?? {
     uvLight: false,
     fieldNotebook: false,
+    keywords: {
+      khoiNguon: false,
+      docLap: false,
+      doiMoi: false,
+    },
+  };
+  const keywordBag = inventory.keywords ?? {
+    khoiNguon: false,
+    docLap: false,
+    doiMoi: false,
   };
 
   const [answers, setAnswers] = useState({
@@ -126,7 +139,7 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
     dispatch(completeStage(stage));
     setNotification({
       kind: "success",
-      message: "Xác nhận thành công. Đang mở khóa phòng tiếp theo...",
+      message: getSuccessMessage(),
     });
 
     window.setTimeout(() => {
@@ -193,6 +206,38 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
           {notification.message}
         </p>
       )}
+
+      <article className="rounded-xl border border-border bg-surface p-5">
+        <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          Túi đồ từ khóa UV
+        </p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          <div className="rounded-lg border border-border/70 bg-background/60 px-3 py-2">
+            <p className="text-[0.68rem] uppercase tracking-[0.14em] text-muted-foreground">
+              Stage 1
+            </p>
+            <p className="mt-1 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-foreground">
+              {keywordBag.khoiNguon ? "KHỞI NGUỒN / TỔ CHỨC" : "Chưa thu thập"}
+            </p>
+          </div>
+          <div className="rounded-lg border border-border/70 bg-background/60 px-3 py-2">
+            <p className="text-[0.68rem] uppercase tracking-[0.14em] text-muted-foreground">
+              Stage 2
+            </p>
+            <p className="mt-1 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-foreground">
+              {keywordBag.docLap ? "ĐỘC LẬP" : "Chưa thu thập"}
+            </p>
+          </div>
+          <div className="rounded-lg border border-border/70 bg-background/60 px-3 py-2">
+            <p className="text-[0.68rem] uppercase tracking-[0.14em] text-muted-foreground">
+              Stage 3
+            </p>
+            <p className="mt-1 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-foreground">
+              {keywordBag.doiMoi ? "ĐỔI MỚI" : "Chưa thu thập"}
+            </p>
+          </div>
+        </div>
+      </article>
 
       <article className={renderRoom1930 ? "space-y-4" : "hidden"}>
         <div className="rounded-xl border border-border bg-surface p-6">

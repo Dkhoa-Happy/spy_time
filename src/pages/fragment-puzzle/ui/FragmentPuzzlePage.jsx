@@ -767,9 +767,6 @@ const FragmentPuzzlePage = () => {
                       message:
                         "Bạn đã giải ô chữ lịch sử thành công! Đông đảo quần chúng tham gia phong trào cách mạng.",
                     });
-                    setTimeout(() => {
-                      navigate(ROUTES.stage1945);
-                    }, 1500);
                   }}
                 >
                   Tiếp tục

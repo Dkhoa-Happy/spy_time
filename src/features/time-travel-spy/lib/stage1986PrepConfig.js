@@ -4,6 +4,8 @@ const MAP_LOCATIONS = [
     name: "Hương Cảng",
     period: "1930",
     event: "Hội nghị thành lập Đảng đầu năm 1930",
+    quizPrompt:
+      "Câu 1: Hội nghị hợp nhất các tổ chức cộng sản đầu năm 1930 diễn ra ở đâu?",
     coordinates: { lat: 22.3193, lng: 114.1694 },
     mapPosition: { top: "68%", left: "17%" },
     target: true,
@@ -14,6 +16,8 @@ const MAP_LOCATIONS = [
     name: "Tân Trào",
     period: "1945",
     event: "Căn cứ phát lệnh tổng khởi nghĩa",
+    quizPrompt:
+      "Câu 2: Căn cứ phát lệnh tổng khởi nghĩa Tháng Tám năm 1945 là ở đâu?",
     coordinates: { lat: 22.3888, lng: 105.5187 },
     mapPosition: { top: "39%", left: "63%" },
     target: true,
@@ -24,6 +28,8 @@ const MAP_LOCATIONS = [
     name: "Ba Đình - Hà Nội",
     period: "1945",
     event: "Nơi đọc Tuyên ngôn Độc lập",
+    quizPrompt:
+      "Câu 3: Ngày 2/9/1945, Tuyên ngôn Độc lập được đọc tại địa điểm nào?",
     coordinates: { lat: 21.0369, lng: 105.8342 },
     mapPosition: { top: "34%", left: "69%" },
     target: true,
@@ -34,6 +40,7 @@ const MAP_LOCATIONS = [
     name: "Ngọ Môn - Huế",
     period: "1945",
     event: "Bảo Đại thoái vị",
+    quizPrompt: "Câu 4: Sự kiện Bảo Đại thoái vị diễn ra tại địa điểm nào?",
     coordinates: { lat: 16.4669, lng: 107.5787 },
     mapPosition: { top: "56%", left: "72%" },
     target: true,
@@ -44,6 +51,8 @@ const MAP_LOCATIONS = [
     name: "Sài Gòn - Gia Định",
     period: "1945",
     event: "Trung tâm giành chính quyền ở Nam Bộ",
+    quizPrompt:
+      "Câu 5: Trung tâm giành chính quyền ở Nam Bộ trong Cách mạng Tháng Tám là ở đâu?",
     coordinates: { lat: 10.8231, lng: 106.6297 },
     mapPosition: { top: "78%", left: "78%" },
     target: true,
