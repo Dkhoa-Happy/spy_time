@@ -32,6 +32,7 @@ const SHOOTER_SCALE = 1.26;
 const COIN_SCALE = 1.25;
 const SOLDIER_VISUAL_RANGE = 380;
 const RICE_TILE_SCALE = 2.15;
+const DECOR_TILE_SCALE = 2.2;
 const RICE_SPRITE_OFFSETS = [
   [-28, -12],
   [-8, -8],
@@ -270,6 +271,26 @@ const createCoinNode = (scene) => {
   return scene.add.container(0, 0, [glow, sprite]);
 };
 
+const createDecorationImageNode = (
+  scene,
+  { x, y, key, scale = DECOR_TILE_SCALE, depth = 0, angle = 0, shadow = false },
+) => {
+  const children = [];
+
+  if (shadow) {
+    children.push(createPixelShadow(scene, 24, 10, 0.16).setPosition(0, 12));
+  }
+
+  children.push(
+    scene.add
+      .image(0, 0, key)
+      .setOrigin(0.5)
+      .setScale(scale),
+  );
+
+  return scene.add.container(x, y, children).setDepth(depth).setAngle(angle);
+};
+
 const createGrassFloorTiles = (
   scene,
   left,
@@ -433,6 +454,105 @@ export class Stage1975PhaserScene extends Phaser.Scene {
       .setTint(0xe9ffe1)
       .setAlpha(0.2)
       .setDepth(-1);
+
+    this.flowerDecorations = [
+      createDecorationImageNode(this, {
+        x: 82,
+        y: 212,
+        key: farmAssets.flowerTile.key,
+        scale: 2.35,
+        depth: -2.4,
+        angle: -4,
+        shadow: true,
+      }),
+      createDecorationImageNode(this, {
+        x: 920,
+        y: 474,
+        key: farmAssets.flowerTile.key,
+        scale: 2.35,
+        depth: -2.4,
+        angle: 3,
+        shadow: true,
+      }),
+    ];
+
+    this.shovelDecoration = createDecorationImageNode(this, {
+      x: 286,
+      y: 365,
+      key: farmAssets.shovelTile.key,
+      scale: 2.25,
+      depth: 0.74,
+      angle: -18,
+      shadow: true,
+    });
+
+    this.waterToolDecoration = createDecorationImageNode(this, {
+      x: 730,
+      y: 352,
+      key: farmAssets.waterToolTile.key,
+      scale: 2.05,
+      depth: 0.74,
+      angle: 11,
+      shadow: true,
+    });
+
+    this.groundScatterGrass = [
+      { x: 166, y: 174, key: farmAssets.yardGrassTile.key, scale: 1.55, angle: -6 },
+      { x: 300, y: 208, key: farmAssets.yardGrassBladeTile.key, scale: 1.42, angle: 4 },
+      { x: 444, y: 166, key: farmAssets.yardGrassTile.key, scale: 1.5, angle: -3 },
+      { x: 574, y: 214, key: farmAssets.yardGrassBladeTile.key, scale: 1.36, angle: 6 },
+      { x: 740, y: 176, key: farmAssets.yardGrassTile.key, scale: 1.52, angle: -5 },
+      { x: 828, y: 252, key: farmAssets.yardGrassBladeTile.key, scale: 1.38, angle: 3 },
+      { x: 194, y: 404, key: farmAssets.yardGrassTile.key, scale: 1.48, angle: -4 },
+      { x: 332, y: 474, key: farmAssets.yardGrassBladeTile.key, scale: 1.34, angle: 5 },
+      { x: 540, y: 496, key: farmAssets.yardGrassTile.key, scale: 1.45, angle: -2 },
+      { x: 724, y: 428, key: farmAssets.yardGrassBladeTile.key, scale: 1.36, angle: -4 },
+      { x: 812, y: 486, key: farmAssets.yardGrassTile.key, scale: 1.5, angle: 4 },
+    ].map((decor, index) =>
+      createDecorationImageNode(this, {
+        ...decor,
+        depth: decor.y < 300 ? -2.05 : 0.66 + index * 0.001,
+      }),
+    );
+
+    this.strawRollDecorations = [
+      { x: 246, y: 136, angle: -8 },
+      { x: 696, y: 148, angle: 6 },
+      { x: 150, y: 446, angle: -5 },
+      { x: 784, y: 454, angle: 7 },
+    ].map((decor, index) =>
+      createDecorationImageNode(this, {
+        x: decor.x,
+        y: decor.y,
+        key: farmAssets.strawRollTile.key,
+        scale: 1.75 + (index % 2) * 0.1,
+        depth: decor.y < 300 ? -2.08 : 0.7 + index * 0.001,
+        angle: decor.angle,
+        shadow: true,
+      }),
+    );
+
+    this.flowerDecorations.forEach((flower, index) => {
+      this.tweens.add({
+        targets: flower,
+        angle: flower.angle + (index === 0 ? 5 : -4),
+        duration: 1900 + index * 220,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.inOut",
+      });
+    });
+
+    this.groundScatterGrass.forEach((grass, index) => {
+      this.tweens.add({
+        targets: grass,
+        angle: grass.angle + (index % 2 === 0 ? 5 : -5),
+        duration: 1700 + (index % 4) * 180,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.inOut",
+      });
+    });
 
     this.groundGlow = this.add.circle(500, 460, 28, 0xbff5b6, 0.14).setDepth(4);
   }

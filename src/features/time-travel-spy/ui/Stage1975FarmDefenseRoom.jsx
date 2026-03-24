@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Phaser from "phaser";
 import {
   ArrowRight,
@@ -141,7 +141,7 @@ export const Stage1975FarmDefenseRoom = ({
     sceneControllerRef.current?.pauseGameplay?.();
   }, [activeWaveBriefing]);
 
-  const handleSceneAction = (actionKey) => {
+  const handleSceneAction = useCallback((actionKey) => {
     if (actionKey === "restart") {
       setAcknowledgedWaveBriefing(1);
     }
@@ -151,7 +151,7 @@ export const Stage1975FarmDefenseRoom = ({
     }
 
     sceneControllerRef.current[actionKey]?.();
-  };
+  }, [isSceneReady]);
 
   const handleDismissWaveBriefing = () => {
     if (!activeWaveBriefing) {
@@ -174,47 +174,113 @@ export const Stage1975FarmDefenseRoom = ({
   const forgeHoeCost =
     STAGE_1975_ACTION_COSTS.forgeHoe[uiState.weaponLevel - 1];
 
-  const actionCards = [
-    {
-      id: "unlockPlot",
-      label: "Mở ruộng",
-      cost: unlockPlotCost,
-      disabled: uiState.phase !== "playing" || !unlockPlotCost || !isSceneReady,
-    },
-    {
-      id: "upgradeFarm",
-      label: "Nâng nông trại",
-      cost: upgradeFarmCost,
-      disabled:
-        uiState.phase !== "playing" || !upgradeFarmCost || !isSceneReady,
-    },
-    {
-      id: "hireFarmer",
-      label: "Gọi nông dân",
-      cost: hireFarmerCost,
-      disabled: uiState.phase !== "playing" || uiState.farmerHired || !isSceneReady,
-    },
-    {
-      id: "hireSoldier",
-      label: "Gọi bộ đội",
-      cost: hireSoldierCost,
-      disabled:
-        uiState.phase !== "playing" || !hireSoldierCost || !isSceneReady,
-    },
-    {
-      id: "upgradeFence",
-      label: "Nâng rào",
-      cost: upgradeFenceCost,
-      disabled:
-        uiState.phase !== "playing" || !upgradeFenceCost || !isSceneReady,
-    },
-    {
-      id: "forgeHoe",
-      label: "Rèn cuốc",
-      cost: forgeHoeCost,
-      disabled: uiState.phase !== "playing" || !forgeHoeCost || !isSceneReady,
-    },
-  ];
+  const actionCards = useMemo(
+    () => [
+      {
+        id: "unlockPlot",
+        hotkey: "1",
+        label: "Mở ruộng",
+        cost: unlockPlotCost,
+        disabled:
+          uiState.phase !== "playing" || !unlockPlotCost || !isSceneReady,
+      },
+      {
+        id: "upgradeFarm",
+        hotkey: "2",
+        label: "Nâng nông trại",
+        cost: upgradeFarmCost,
+        disabled:
+          uiState.phase !== "playing" || !upgradeFarmCost || !isSceneReady,
+      },
+      {
+        id: "hireFarmer",
+        hotkey: "3",
+        label: "Gọi nông dân",
+        cost: hireFarmerCost,
+        disabled:
+          uiState.phase !== "playing" || uiState.farmerHired || !isSceneReady,
+      },
+      {
+        id: "hireSoldier",
+        hotkey: "4",
+        label: "Gọi bộ đội",
+        cost: hireSoldierCost,
+        disabled:
+          uiState.phase !== "playing" || !hireSoldierCost || !isSceneReady,
+      },
+      {
+        id: "upgradeFence",
+        hotkey: "5",
+        label: "Nâng rào",
+        cost: upgradeFenceCost,
+        disabled:
+          uiState.phase !== "playing" || !upgradeFenceCost || !isSceneReady,
+      },
+      {
+        id: "forgeHoe",
+        hotkey: "6",
+        label: "Rèn cuốc",
+        cost: forgeHoeCost,
+        disabled:
+          uiState.phase !== "playing" || !forgeHoeCost || !isSceneReady,
+      },
+    ],
+    [
+      forgeHoeCost,
+      hireFarmerCost,
+      hireSoldierCost,
+      isSceneReady,
+      uiState.farmerHired,
+      uiState.phase,
+      unlockPlotCost,
+      upgradeFarmCost,
+      upgradeFenceCost,
+    ],
+  );
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (
+        event.repeat ||
+        showIntro ||
+        activeWaveBriefing ||
+        uiState.phase !== "playing" ||
+        !isSceneReady
+      ) {
+        return;
+      }
+
+      const target = event.target;
+      if (
+        target instanceof HTMLElement &&
+        ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)
+      ) {
+        return;
+      }
+
+      const hotkey = event.code.replace("Digit", "").replace("Numpad", "");
+      const matchedAction = actionCards.find((action) => action.hotkey === hotkey);
+
+      if (!matchedAction || matchedAction.disabled) {
+        return;
+      }
+
+      event.preventDefault();
+      handleSceneAction(matchedAction.id);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [
+    actionCards,
+    activeWaveBriefing,
+    handleSceneAction,
+    isSceneReady,
+    showIntro,
+    uiState.phase,
+  ]);
 
   const hudCards = [
     {
@@ -333,7 +399,7 @@ export const Stage1975FarmDefenseRoom = ({
                         Bảng hành động
                       </p>
                       <p className="mt-1 text-[0.72rem] leading-5 text-white/68">
-                        `W A S D` / `↑ ↓ ← →` để di chuyển. Chọn lệnh ngay tại đây.
+                        `W A S D` / `↑ ↓ ← →` để di chuyển. Bấm `1-6` để gọi lệnh nhanh.
                       </p>
                     </div>
 
@@ -371,6 +437,9 @@ export const Stage1975FarmDefenseRoom = ({
                           disabled={action.disabled}
                         >
                           <p className="text-[0.74rem] font-semibold uppercase tracking-[0.14em]">
+                            <span className="mr-2 rounded-md border border-white/12 bg-black/15 px-1.5 py-0.5 text-[0.62rem] text-white/72">
+                              {action.hotkey}
+                            </span>
                             {action.label}
                           </p>
                           <p className="mt-1 text-[0.66rem] text-white/65">
