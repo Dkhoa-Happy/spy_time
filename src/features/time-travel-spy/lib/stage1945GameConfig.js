@@ -35,8 +35,7 @@ export const STAGE_1945_MILESTONES = [
     order: 2,
     title: "Nhật đầu hàng - thời cơ",
     dateLabel: "14/8/1945",
-    infoText:
-      "Ngày 14-8-1945, Nhật Bản chấp nhận đầu hàng Đồng minh.",
+    infoText: "Ngày 14-8-1945, Nhật Bản chấp nhận đầu hàng Đồng minh.",
     placeholderVariant: "opportunity",
     imageSlot: "ARCHIVE BETA",
     imageSrc: publicImage("Mamoru Shigemitsu Surrender 1945.jpg"),
@@ -113,7 +112,8 @@ export const STAGE_1945_MILESTONES = [
       id: "morse-doc-lap",
       order: 3,
       label: "Mật thư 03",
-      clueText: "Từ khóa biểu tượng cho sự kiện ngày 2/9/1945 và màn cuối của room 1945.",
+      clueText:
+        "Từ khóa biểu tượng cho sự kiện ngày 2/9/1945 và màn cuối của room 1945.",
       signal: "-.. --- -.-. / .-.. .- .--.",
       acceptedAnswers: ["DOC LAP"],
       solvedKeyword: "DOC LAP",

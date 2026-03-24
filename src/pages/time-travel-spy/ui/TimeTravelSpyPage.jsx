@@ -56,12 +56,14 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
     keywords: {
       khoiNguon: false,
       docLap: false,
+      thongNhat: false,
       doiMoi: false,
     },
   };
   const keywordBag = inventory.keywords ?? {
     khoiNguon: false,
     docLap: false,
+    thongNhat: false,
     doiMoi: false,
   };
 
@@ -190,7 +192,7 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
         <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
           Túi đồ từ khóa UV
         </p>
-        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-lg border border-border/70 bg-background/60 px-3 py-2">
             <p className="text-[0.68rem] uppercase tracking-[0.14em] text-muted-foreground">
               Stage 1
@@ -210,6 +212,14 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
           <div className="rounded-lg border border-border/70 bg-background/60 px-3 py-2">
             <p className="text-[0.68rem] uppercase tracking-[0.14em] text-muted-foreground">
               Stage 3
+            </p>
+            <p className="mt-1 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-foreground">
+              {keywordBag.thongNhat ? "THỐNG NHẤT" : "Chưa thu thập"}
+            </p>
+          </div>
+          <div className="rounded-lg border border-border/70 bg-background/60 px-3 py-2">
+            <p className="text-[0.68rem] uppercase tracking-[0.14em] text-muted-foreground">
+              Stage 4
             </p>
             <p className="mt-1 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-foreground">
               {keywordBag.doiMoi ? "ĐỔI MỚI" : "Chưa thu thập"}

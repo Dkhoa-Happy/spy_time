@@ -22,11 +22,12 @@ export const MainLayout = () => {
   const keywordBag = game.inventory?.keywords ?? {
     khoiNguon: false,
     docLap: false,
+    thongNhat: false,
     doiMoi: false,
   };
-  const hasCompletedFirstThree =
-    [1, 2, 3].every((stage) => completedStages.includes(stage)) ||
-    (game.unlockedStage ?? 1) >= 4;
+  const hasCompletedAllRooms =
+    Boolean(game.missionCompleted) &&
+    [1, 2, 3, 4].every((stage) => completedStages.includes(stage));
   const isInsideRoomArea = [
     ROUTES.stage1930,
     ROUTES.stage1945,
@@ -40,6 +41,7 @@ export const MainLayout = () => {
     { to: ROUTES.stage1945, label: "Room 1945" },
     { to: ROUTES.stage1975, label: "Room 1975" },
     { to: ROUTES.stage1986, label: "Room 1986" },
+    { to: ROUTES.missionComplete, label: "Mission Accomplished" },
   ];
 
   const UV_HUNT_CLUES = {
@@ -57,6 +59,14 @@ export const MainLayout = () => {
         keywordKey: "docLap",
         text: "ĐỘC LẬP",
         style: { right: "17%", top: "28%" },
+      },
+    ],
+    [ROUTES.stage1975]: [
+      {
+        id: "uv-thong-nhat",
+        keywordKey: "thongNhat",
+        text: "THỐNG NHẤT",
+        style: { left: "44%", top: "38%" },
       },
     ],
     [ROUTES.stage1986]: [
@@ -137,10 +147,10 @@ export const MainLayout = () => {
         <header className="flex flex-wrap items-center justify-between gap-4 border-b border-border/80 pb-4">
           <div>
             <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
-              Coordinator Console
+              Bảng điều phối điệp vụ
             </p>
             <h1 className="tracking-tighter text-3xl font-bold text-foreground">
-              Spy Time Control Room
+              Trung tâm điều hành Spy Time
             </h1>
           </div>
           <nav className="flex items-center gap-2 rounded-xl border border-border/80 bg-background/55 p-1.5 shadow-[inset_0_1px_0_rgb(255_255_255_/_0.04)]">
@@ -152,10 +162,10 @@ export const MainLayout = () => {
             </NavLink>
           </nav>
 
-          {hasCompletedFirstThree && isInsideRoomArea && (
+          {hasCompletedAllRooms && isInsideRoomArea && (
             <div className="w-full rounded-xl border border-brand/35 bg-brand/10 p-2.5">
               <p className="px-2 pb-2 text-[0.66rem] font-semibold uppercase tracking-[0.2em] text-orange-100">
-                Chuyen phong nhanh sau khi hoan tat 3 ai
+                Chuyen phong nhanh sau khi hoan tat 4 ai
               </p>
               <div className="flex flex-wrap gap-2">
                 {quickRoomLinks.map((roomLink) => (

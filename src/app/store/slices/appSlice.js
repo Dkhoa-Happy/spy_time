@@ -6,6 +6,7 @@ const createDefaultInventory = () => ({
   keywords: {
     khoiNguon: false,
     docLap: false,
+    thongNhat: false,
     doiMoi: false,
   },
 });
@@ -45,6 +46,7 @@ const ensureInventoryShape = (state) => {
     state.game.inventory.keywords = {
       khoiNguon: false,
       docLap: false,
+      thongNhat: false,
       doiMoi: false,
     };
   }
@@ -128,7 +130,9 @@ const appSlice = createSlice({
       const keywordKey = String(action.payload || "");
       ensureInventoryShape(state);
 
-      if (!["khoiNguon", "docLap", "doiMoi"].includes(keywordKey)) {
+      if (
+        !["khoiNguon", "docLap", "thongNhat", "doiMoi"].includes(keywordKey)
+      ) {
         return;
       }
 

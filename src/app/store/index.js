@@ -45,6 +45,9 @@ const sanitizeGameState = (value) => {
         hasInventory ? value.inventory?.keywords?.khoiNguon : false,
       ),
       docLap: Boolean(hasInventory ? value.inventory?.keywords?.docLap : false),
+      thongNhat: Boolean(
+        hasInventory ? value.inventory?.keywords?.thongNhat : false,
+      ),
       doiMoi: Boolean(hasInventory ? value.inventory?.keywords?.doiMoi : false),
     },
   };
@@ -127,6 +130,7 @@ const sanitizeLegacyGameState = (value) => {
       keywords: {
         khoiNguon: false,
         docLap: false,
+        thongNhat: false,
         doiMoi: false,
       },
     },

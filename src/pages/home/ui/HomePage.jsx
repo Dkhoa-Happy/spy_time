@@ -1,30 +1,20 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Compass } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-import { completeStage } from "../../../app/store/slices/appSlice";
 import {
   TOTAL_STAGE_COUNT,
   getResumeRoute,
 } from "../../../features/time-travel-spy/lib/gameConfig";
 import { Button } from "../../../shared/ui/button";
-import { ROUTES } from "../../../shared/constants/routes";
 
 export const HomePage = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { projectName, game } = useSelector((state) => state.app);
   const resumeRoute = getResumeRoute(game);
   const hasProgress =
     game.completedStages.length > 0 ||
     game.unlockedStage > 1 ||
     game.missionCompleted;
-
-  const unlockToStageThreeForTesting = () => {
-    dispatch(completeStage(1));
-    dispatch(completeStage(2));
-    navigate(ROUTES.stage1975);
-  };
 
   return (
     <section className="grid gap-6 md:grid-cols-[1.4fr_1fr]">
@@ -46,10 +36,6 @@ export const HomePage = () => {
               <Compass className="size-4" />
               {hasProgress ? "Tiếp tục nhiệm vụ" : "Bắt đầu nhiệm vụ"}
             </Link>
-          </Button>
-
-          <Button variant="secondary" onClick={unlockToStageThreeForTesting}>
-            Mở nhanh Stage 3 (test)
           </Button>
         </div>
       </article>

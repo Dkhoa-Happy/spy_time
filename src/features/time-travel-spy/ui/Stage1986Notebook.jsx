@@ -99,7 +99,7 @@ const NOTEBOOK_PAGES = [
     title: "Trang xác minh mật lệnh",
     subtitle: "Niêm phong tác vụ của điệp vụ trước",
     objective:
-      "Tôi để lại đủ manh mối rồi. Nếu đọc kỹ các trang trước, cậu sẽ ghép được mật lệnh mà không cần chép nguyên một dòng lịch sử khô khan.",
+      "Tôi để lại đủ manh mối rồi. Nếu đọc kỹ các trang trước, cậu sẽ ghép được mật lệnh.",
     facts: [
       "Lấy số La Mã của kỳ đại hội quyết định.",
       "Nối tiếp bằng tháng và năm ở thời điểm chốt hướng đi.",

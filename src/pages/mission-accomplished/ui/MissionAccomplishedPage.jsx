@@ -107,6 +107,7 @@ export const MissionAccomplishedPage = () => {
   const keywordBag = game.inventory?.keywords ?? {
     khoiNguon: false,
     docLap: false,
+    thongNhat: false,
     doiMoi: false,
   };
 
@@ -240,13 +241,13 @@ export const MissionAccomplishedPage = () => {
           Dùng đèn UV soi khắp website
         </h3>
         <p className="mt-2 text-sm leading-7 text-muted-foreground">
-          Đã hoàn thành 3 ải. Từ bây giờ, điệp viên bật chế độ UV Hunt ở góc
+          Đã hoàn thành 4 ải. Từ bây giờ, điệp viên bật chế độ UV Hunt ở góc
           phải màn hình, di chuyển qua các trang và soi lớp nền để tìm chữ ẩn.
           Khi thấy chữ phát sáng, bấm vào để thu hoạch vào túi đồ rồi ghi lại
           trên giấy A4 của quản trò.
         </p>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-xl border border-border/70 bg-background/45 p-4">
             <p className="text-[0.68rem] uppercase tracking-[0.15em] text-muted-foreground">
               Stage 1 / 1930
@@ -265,7 +266,15 @@ export const MissionAccomplishedPage = () => {
           </div>
           <div className="rounded-xl border border-border/70 bg-background/45 p-4">
             <p className="text-[0.68rem] uppercase tracking-[0.15em] text-muted-foreground">
-              Stage 3 / 1986
+              Stage 3 / 1975
+            </p>
+            <p className="mt-2 font-mono text-sm font-semibold uppercase tracking-[0.08em] text-foreground">
+              {keywordBag.thongNhat ? "THỐNG NHẤT" : "Chưa thu thập"}
+            </p>
+          </div>
+          <div className="rounded-xl border border-border/70 bg-background/45 p-4">
+            <p className="text-[0.68rem] uppercase tracking-[0.15em] text-muted-foreground">
+              Stage 4 / 1986
             </p>
             <p className="mt-2 font-mono text-sm font-semibold uppercase tracking-[0.08em] text-foreground">
               {keywordBag.doiMoi ? "ĐỔI MỚI" : "Chưa thu thập"}
@@ -292,6 +301,13 @@ export const MissionAccomplishedPage = () => {
             asChild
             variant="secondary"
             disabled={!game.completedStages.includes(3)}
+          >
+            <Link to={ROUTES.stage1975}>Quay lại room 1975</Link>
+          </Button>
+          <Button
+            asChild
+            variant="secondary"
+            disabled={!game.completedStages.includes(4)}
           >
             <Link to={ROUTES.stage1986}>Quay lại room 1986</Link>
           </Button>

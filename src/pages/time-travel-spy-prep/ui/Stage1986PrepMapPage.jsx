@@ -74,6 +74,15 @@ const pickedHaloVisual = {
   weight: 1.6,
 };
 
+const pickedHoverTargetVisual = {
+  radius: 20,
+  color: "transparent",
+  fillColor: "transparent",
+  fillOpacity: 0,
+  opacity: 0,
+  weight: 0,
+};
+
 const getTooltipText = ({ location, isPicked, showContinue, index }) => {
   if (isPicked || showContinue) {
     return {
@@ -91,6 +100,21 @@ const getTooltipText = ({ location, isPicked, showContinue, index }) => {
 };
 
 const getTooltipDirection = (latitude) => (latitude >= 21 ? "bottom" : "top");
+
+const createBurstPoints = (count = 14) => {
+  const points = [];
+
+  for (let index = 0; index < count; index += 1) {
+    const angle = (Math.PI * 2 * index) / count;
+    const radius = 56 + (index % 4) * 14;
+    points.push({
+      x: Math.cos(angle) * radius,
+      y: Math.sin(angle) * radius,
+    });
+  }
+
+  return points;
+};
 
 export const Stage1986PrepMapPage = () => {
   const dispatch = useDispatch();
@@ -166,6 +190,154 @@ export const Stage1986PrepMapPage = () => {
         repeat: 1,
         yoyo: true,
       },
+    );
+  };
+
+  const playCorrectMarkerEffect = (markerPoint) => {
+    const mapNode = mapRef.current;
+
+    if (!mapNode) {
+      return;
+    }
+
+    const mapRect = mapNode.getBoundingClientRect();
+    const startX = mapRect.left + Number(markerPoint?.x ?? mapRect.width * 0.5);
+    const startY = mapRect.top + Number(markerPoint?.y ?? mapRect.height * 0.5);
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+
+    const flyNode = document.createElement("div");
+    flyNode.className = "stage1986-prep__magnifierFly";
+
+    const burstNode = document.createElement("div");
+    burstNode.className = "stage1986-prep__magnifierBurst";
+
+    const burstPoints = createBurstPoints();
+    const shardNodes = burstPoints.map(() => {
+      const shard = document.createElement("span");
+      burstNode.appendChild(shard);
+      return shard;
+    });
+
+    document.body.appendChild(flyNode);
+    document.body.appendChild(burstNode);
+
+    gsap.set(flyNode, {
+      x: startX,
+      y: startY,
+      scale: 0.36,
+      opacity: 0,
+      rotate: -24,
+    });
+
+    gsap.set(burstNode, {
+      x: centerX,
+      y: centerY,
+      scale: 0.12,
+      opacity: 0,
+    });
+
+    gsap.set(shardNodes, {
+      x: 0,
+      y: 0,
+      scale: 0,
+      opacity: 0,
+    });
+
+    const timeline = gsap.timeline({
+      onComplete: () => {
+        flyNode.remove();
+        burstNode.remove();
+      },
+    });
+
+    timeline.to(flyNode, {
+      opacity: 1,
+      scale: 1,
+      rotate: 10,
+      duration: 0.16,
+      ease: "back.out(1.8)",
+    });
+
+    timeline.to(
+      flyNode,
+      {
+        x: centerX,
+        y: centerY,
+        duration: 0.52,
+        ease: "power3.out",
+      },
+      ">-0.04",
+    );
+
+    timeline.to(
+      flyNode,
+      {
+        rotate: 0,
+        scale: 1.2,
+        duration: 0.12,
+        ease: "power2.out",
+      },
+      ">-0.03",
+    );
+
+    timeline.to(
+      burstNode,
+      {
+        opacity: 1,
+        scale: 1,
+        duration: 0.08,
+        ease: "power2.out",
+      },
+      "<",
+    );
+
+    timeline.to(
+      shardNodes,
+      {
+        x: (index) => burstPoints[index]?.x ?? 0,
+        y: (index) => burstPoints[index]?.y ?? 0,
+        scale: (index) => (index % 3 === 0 ? 1.3 : 0.95),
+        opacity: 1,
+        duration: 0.1,
+        ease: "power2.out",
+        stagger: 0.01,
+      },
+      "<",
+    );
+
+    timeline.to(
+      shardNodes,
+      {
+        x: (index) => (burstPoints[index]?.x ?? 0) * 1.5,
+        y: (index) => (burstPoints[index]?.y ?? 0) * 1.5,
+        scale: 0.12,
+        opacity: 0,
+        duration: 0.28,
+        ease: "power2.in",
+        stagger: 0.012,
+      },
+      ">-0.01",
+    );
+
+    timeline.to(
+      flyNode,
+      {
+        scale: 0.14,
+        opacity: 0,
+        duration: 0.16,
+        ease: "power2.in",
+      },
+      "<",
+    );
+
+    timeline.to(
+      burstNode,
+      {
+        opacity: 0,
+        duration: 0.08,
+      },
+      ">-0.1",
     );
   };
 
@@ -323,7 +495,7 @@ export const Stage1986PrepMapPage = () => {
     );
   };
 
-  const handlePickLocation = (location) => {
+  const handlePickLocation = (location, event) => {
     if (showContinue || pickedIds.has(location.id) || isAnimating) {
       return;
     }
@@ -355,6 +527,7 @@ export const Stage1986PrepMapPage = () => {
       nextPicked.size >= STAGE_1986_PREP_UV_RELEASE_COUNT &&
       nextPicked.size < STAGE_1986_PREP_TARGET_TOTAL
     ) {
+      playCorrectMarkerEffect(event?.containerPoint);
       playItemReveal({
         itemKey: "uvLight",
         statusText: uvRevealLabel,
@@ -542,21 +715,50 @@ export const Stage1986PrepMapPage = () => {
                     ]}
                     {...markerStyle}
                     eventHandlers={{
-                      click: () => handlePickLocation(location),
+                      click: (event) => handlePickLocation(location, event),
                     }}
                   >
-                    <Tooltip
-                      direction={getTooltipDirection(location.coordinates.lat)}
-                      offset={[0, 10]}
-                      opacity={0.96}
-                    >
-                      <div className="stage1986-prep__tooltip">
-                        <strong>{tooltipText.title}</strong>
-                        <span>{tooltipText.body}</span>
-                        <small>{tooltipText.meta}</small>
-                      </div>
-                    </Tooltip>
+                    {!isPicked && (
+                      <Tooltip
+                        direction={getTooltipDirection(
+                          location.coordinates.lat,
+                        )}
+                        offset={[0, 10]}
+                        opacity={0.96}
+                      >
+                        <div className="stage1986-prep__tooltip">
+                          <strong>{tooltipText.title}</strong>
+                          <span>{tooltipText.body}</span>
+                          <small>{tooltipText.meta}</small>
+                        </div>
+                      </Tooltip>
+                    )}
                   </CircleMarker>
+
+                  {isPicked && (
+                    <CircleMarker
+                      center={[
+                        location.coordinates.lat,
+                        location.coordinates.lng,
+                      ]}
+                      {...pickedHoverTargetVisual}
+                    >
+                      <Tooltip
+                        direction={getTooltipDirection(
+                          location.coordinates.lat,
+                        )}
+                        offset={[0, 12]}
+                        opacity={0.96}
+                        sticky
+                      >
+                        <div className="stage1986-prep__tooltip">
+                          <strong>{tooltipText.title}</strong>
+                          <span>{tooltipText.body}</span>
+                          <small>{tooltipText.meta}</small>
+                        </div>
+                      </Tooltip>
+                    </CircleMarker>
+                  )}
                 </Fragment>
               );
             })}
