@@ -86,6 +86,13 @@ const STAGE_SUMMARY = [
   },
   {
     id: 3,
+    year: "1975",
+    title: "Nông trại phòng tuyến",
+    detail:
+      "Giữ hậu phương vận hành, nuôi quân qua 10 wave và chặn địch tràn vào nông trại.",
+  },
+  {
+    id: 4,
     year: "1986",
     title: "Đại hội VI và Đổi mới",
     detail:
@@ -162,12 +169,12 @@ export const MissionAccomplishedPage = () => {
                 Mission Accomplished
               </p>
               <h2 className="mt-4 max-w-3xl text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-                Bạn đã giải án thành công toàn bộ 3 ải của {projectName}
+                Bạn đã giải án thành công toàn bộ 4 ải của {projectName}
               </h2>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
-                Chuỗi manh mối 1930, 1945 và 1986 đã được nối lại chính xác. Hồ
-                sơ lịch sử đã khép kín, mật lệnh cuối được xác thực và dòng thời
-                gian hiện ở trạng thái an toàn.
+                Chuỗi manh mối 1930, 1945, 1975 và 1986 đã được nối lại chính
+                xác. Hồ sơ lịch sử đã khép kín, mật lệnh cuối được xác thực và
+                dòng thời gian hiện ở trạng thái an toàn.
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3">
@@ -196,7 +203,7 @@ export const MissionAccomplishedPage = () => {
                       Số ải hoàn tất
                     </p>
                     <p className="mt-2 text-3xl font-bold tracking-tight text-foreground">
-                      {game.completedStages.length}/3
+                      {game.completedStages.length}/4
                     </p>
                   </div>
                   <div className="rounded-xl border border-border/70 bg-surface/75 p-4">

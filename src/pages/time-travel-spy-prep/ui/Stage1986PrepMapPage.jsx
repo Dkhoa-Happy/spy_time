@@ -13,8 +13,8 @@ import {
 } from "lucide-react";
 
 import {
-  collectStage3Item,
-  completeStage3Prep,
+  collectStage1986Item,
+  completeStage1986Prep,
 } from "../../../app/store/slices/appSlice";
 import {
   STAGE_1986_PREP_LOCATIONS,
@@ -97,7 +97,7 @@ export const Stage1986PrepMapPage = () => {
   const navigate = useNavigate();
   const gameState = useSelector((state) => state.app.game);
 
-  const stage3PrepCompleted = Boolean(gameState?.stage3PrepCompleted);
+  const stage1986PrepCompleted = Boolean(gameState?.stage1986PrepCompleted);
   const inventory = gameState?.inventory ?? {
     uvLight: false,
     fieldNotebook: false,
@@ -115,9 +115,10 @@ export const Stage1986PrepMapPage = () => {
     "Chọn đúng 5 địa điểm khớp hồ sơ lịch sử từ các ải trước.",
   );
   const [statusKind, setStatusKind] = useState("idle");
-  const [isRevealDone, setIsRevealDone] = useState(stage3PrepCompleted);
+  const [isRevealDone, setIsRevealDone] = useState(stage1986PrepCompleted);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [activeMarkerId, setActiveMarkerId] = useState("");
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const targetSequence = useMemo(
     () => STAGE_1986_PREP_LOCATIONS.filter((location) => location.target),
@@ -126,6 +127,8 @@ export const Stage1986PrepMapPage = () => {
   const pickedCount = pickedIds.size;
   const hasUvInBag = Boolean(inventory.uvLight);
   const hasNotebookInBag = Boolean(inventory.fieldNotebook);
+  const showContinue =
+    stage1986PrepCompleted || hasNotebookInBag || isRevealDone;
   const showContinue = stage3PrepCompleted || hasNotebookInBag || isRevealDone;
   const currentQuestion = showContinue
     ? null
@@ -179,10 +182,10 @@ export const Stage1986PrepMapPage = () => {
     const particleNodes = particlesRef.current;
 
     if (!itemNode || !shellNode || !mapNode) {
-      dispatch(collectStage3Item(itemKey));
+      dispatch(collectStage1986Item(itemKey));
       if (completeMission) {
         setIsRevealDone(true);
-        dispatch(completeStage3Prep());
+        dispatch(completeStage1986Prep());
       }
       setStatusKind(completeMission ? "success" : "progress");
       setStatusMessage(statusText);
@@ -190,6 +193,7 @@ export const Stage1986PrepMapPage = () => {
     }
 
     isAnimatingRef.current = true;
+    setIsAnimating(true);
 
     const mapBoundsRect = mapNode.getBoundingClientRect();
     const slotBounds = itemNode.getBoundingClientRect();
@@ -223,16 +227,17 @@ export const Stage1986PrepMapPage = () => {
 
     const timeline = gsap.timeline({
       onComplete: () => {
-        dispatch(collectStage3Item(itemKey));
+        dispatch(collectStage1986Item(itemKey));
 
         if (completeMission) {
           setIsRevealDone(true);
-          dispatch(completeStage3Prep());
+          dispatch(completeStage1986Prep());
         }
 
         setStatusKind(completeMission ? "success" : "progress");
         setStatusMessage(statusText);
         isAnimatingRef.current = false;
+        setIsAnimating(false);
         flyNode.remove();
       },
     });
@@ -320,7 +325,7 @@ export const Stage1986PrepMapPage = () => {
   };
 
   const handlePickLocation = (location) => {
-    if (showContinue || pickedIds.has(location.id) || isAnimatingRef.current) {
+    if (showContinue || pickedIds.has(location.id) || isAnimating) {
       return;
     }
 
@@ -381,7 +386,7 @@ export const Stage1986PrepMapPage = () => {
   };
 
   const handleResetRound = () => {
-    if (showContinue || isAnimatingRef.current) {
+    if (showContinue || isAnimating) {
       return;
     }
 
@@ -396,15 +401,15 @@ export const Stage1986PrepMapPage = () => {
     navigate(ROUTES.stage1986);
   };
 
-  const goBackStage1945 = () => {
-    navigate(ROUTES.stage1945);
+  const goBackStage1975 = () => {
+    navigate(ROUTES.stage1975);
   };
 
   return (
     <section className="stage1986-prep" ref={shellRef}>
       <header className="stage1986-prep__header">
         <div>
-          <p className="stage1986-prep__eyebrow">Stage 3 / Prep Mission</p>
+          <p className="stage1986-prep__eyebrow">Stage 4 / Prep Mission</p>
           <h2>Truy tìm công cụ 1986 trên bản đồ lịch sử</h2>
           <p>
             Tổng hợp mốc từ các ải trước, dò đúng 5 địa điểm then chốt để hệ
@@ -412,14 +417,14 @@ export const Stage1986PrepMapPage = () => {
           </p>
         </div>
         <div className="stage1986-prep__actions">
-          <Button type="button" variant="secondary" onClick={goBackStage1945}>
-            Quay lại màn 1945
+          <Button type="button" variant="secondary" onClick={goBackStage1975}>
+            Quay lại màn 1975
           </Button>
           <Button
             type="button"
             variant="secondary"
             onClick={handleResetRound}
-            disabled={showContinue || isAnimatingRef.current}
+            disabled={showContinue || isAnimating}
           >
             <RotateCcw className="size-4" />
             Reset vòng

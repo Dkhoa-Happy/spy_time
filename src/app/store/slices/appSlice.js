@@ -7,6 +7,7 @@ const initialState = {
     unlockedStage: 1,
     completedStages: [],
     missionCompleted: false,
+    stage1986PrepCompleted: false,
     stage3PrepCompleted: false,
     uvHuntEnabled: false,
     inventory: {
@@ -62,7 +63,7 @@ const appSlice = createSlice({
     completeStage: (state, action) => {
       const stage = Number(action.payload);
 
-      if (![1, 2, 3].includes(stage)) {
+      if (![1, 2, 3, 4].includes(stage)) {
         return;
       }
 
@@ -70,24 +71,33 @@ const appSlice = createSlice({
         state.game.completedStages.push(stage);
       }
 
-      if (stage < 3) {
+      if (stage < 4) {
         state.game.unlockedStage = Math.max(
           state.game.unlockedStage,
           stage + 1,
         );
       }
 
-      if (stage === 3) {
+      if (stage === 4) {
         state.game.missionCompleted = true;
       }
     },
+    completeStage1986Prep: (state) => {
+      state.game.stage1986PrepCompleted = true;
+      if (!state.game.inventory || typeof state.game.inventory !== "object") {
+        state.game.inventory = {
+          uvLight: false,
+          fieldNotebook: false,
+        };
+      }
     completeStage3Prep: (state) => {
       state.game.stage3PrepCompleted = true;
       ensureInventoryShape(state);
       state.game.inventory.uvLight = true;
       state.game.inventory.fieldNotebook = true;
-      state.game.unlockedStage = Math.max(state.game.unlockedStage, 3);
+      state.game.unlockedStage = Math.max(state.game.unlockedStage, 4);
     },
+    collectStage1986Item: (state, action) => {
     setUvHuntEnabled: (state, action) => {
       state.game.uvHuntEnabled = Boolean(action.payload);
     },
@@ -120,6 +130,11 @@ const appSlice = createSlice({
         unlockedStage: 1,
         completedStages: [],
         missionCompleted: false,
+        stage1986PrepCompleted: false,
+        inventory: {
+          uvLight: false,
+          fieldNotebook: false,
+        },
         stage3PrepCompleted: false,
         uvHuntEnabled: false,
         inventory: createDefaultInventory(),
@@ -132,6 +147,8 @@ export const {
   incrementMissionCounter,
   resetMissionCounter,
   completeStage,
+  collectStage1986Item,
+  completeStage1986Prep,
   collectStage3Item,
   collectKeyword,
   setUvHuntEnabled,
