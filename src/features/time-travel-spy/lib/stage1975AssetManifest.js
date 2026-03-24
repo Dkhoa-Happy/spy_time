@@ -15,6 +15,12 @@ import farmGroundTileSrc from "../../../assets/Pixel Platformer Farm Expansion/T
 import farmGroundAltTileSrc from "../../../assets/Pixel Platformer Farm Expansion/Tiles/tile_0053.png";
 import farmDirtTileSrc from "../../../assets/Pixel Platformer Farm Expansion/Tiles/tile_0001.png";
 import farmDirtAltTileSrc from "../../../assets/Pixel Platformer Farm Expansion/Tiles/tile_0017.png";
+import farmHayBaleTileSrc from "../../../assets/Pixel Platformer Farm Expansion/Tiles/tile_0008.png";
+import farmStrawRollTileSrc from "../../../assets/Pixel Platformer Farm Expansion/Tiles/tile_0009.png";
+import farmHayBaleRoundTileSrc from "../../../assets/Pixel Platformer Farm Expansion/Tiles/tile_0010.png";
+import farmFlowerTileSrc from "../../../assets/Pixel Platformer Farm Expansion/Tiles/tile_0020.png";
+import farmShovelTileSrc from "../../../assets/Pixel Platformer Farm Expansion/Tiles/tile_0021.png";
+import farmWaterToolTileSrc from "../../../assets/Pixel Platformer Farm Expansion/Tiles/tile_0026.png";
 import farmFenceTile1Src from "../../../assets/Pixel Platformer Farm Expansion/Tiles/tile_0038.png";
 import farmFenceTile2Src from "../../../assets/Pixel Platformer Farm Expansion/Tiles/tile_0039.png";
 import farmFenceTile3Src from "../../../assets/Pixel Platformer Farm Expansion/Tiles/tile_0040.png";
@@ -42,6 +48,7 @@ import farmWoodAltTileSrc from "../../../assets/Pixel Platformer Farm Expansion/
 import farmStorageTileSrc from "../../../assets/Pixel Platformer Farm Expansion/Tiles/tile_0024.png";
 import riceSproutTileSrc from "../../../assets/Pixel Platformer Farm Expansion/Tiles/tile_0090.png";
 import riceYoungTileSrc from "../../../assets/Pixel Platformer Farm Expansion/Tiles/tile_0074.png";
+import farmGrassBladeTileSrc from "../../../assets/Pixel Platformer Farm Expansion/Tiles/tile_0075.png";
 import riceRipeTileSrc from "../../../assets/Pixel Platformer Farm Expansion/Tiles/tile_0058.png";
 import riceStubbleTileSrc from "../../../assets/Pixel Platformer Farm Expansion/Tiles/tile_0106.png";
 
@@ -147,6 +154,38 @@ export const STAGE_1975_SCENE_ASSETS = {
     dirtAltTile: {
       key: "stage1975-farm-dirt-alt",
       src: farmDirtAltTileSrc,
+    },
+    flowerTile: {
+      key: "stage1975-farm-flower",
+      src: farmFlowerTileSrc,
+    },
+    hayBaleTile: {
+      key: "stage1975-farm-hay-bale",
+      src: farmHayBaleTileSrc,
+    },
+    strawRollTile: {
+      key: "stage1975-farm-straw-roll",
+      src: farmStrawRollTileSrc,
+    },
+    hayBaleRoundTile: {
+      key: "stage1975-farm-hay-bale-round",
+      src: farmHayBaleRoundTileSrc,
+    },
+    yardGrassTile: {
+      key: "stage1975-farm-yard-grass",
+      src: riceYoungTileSrc,
+    },
+    yardGrassBladeTile: {
+      key: "stage1975-farm-yard-grass-blade",
+      src: farmGrassBladeTileSrc,
+    },
+    shovelTile: {
+      key: "stage1975-farm-shovel",
+      src: farmShovelTileSrc,
+    },
+    waterToolTile: {
+      key: "stage1975-farm-water-tool",
+      src: farmWaterToolTileSrc,
     },
     fenceTiles: [
       {
