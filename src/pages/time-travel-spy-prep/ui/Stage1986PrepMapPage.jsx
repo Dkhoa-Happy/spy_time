@@ -74,6 +74,15 @@ const pickedHaloVisual = {
   weight: 1.6,
 };
 
+const pickedHoverTargetVisual = {
+  radius: 20,
+  color: "transparent",
+  fillColor: "transparent",
+  fillOpacity: 0,
+  opacity: 0,
+  weight: 0,
+};
+
 const getTooltipText = ({ location, isPicked, showContinue, index }) => {
   if (isPicked || showContinue) {
     return {
@@ -91,6 +100,21 @@ const getTooltipText = ({ location, isPicked, showContinue, index }) => {
 };
 
 const getTooltipDirection = (latitude) => (latitude >= 21 ? "bottom" : "top");
+
+const createBurstPoints = (count = 14) => {
+  const points = [];
+
+  for (let index = 0; index < count; index += 1) {
+    const angle = (Math.PI * 2 * index) / count;
+    const radius = 56 + (index % 4) * 14;
+    points.push({
+      x: Math.cos(angle) * radius,
+      y: Math.sin(angle) * radius,
+    });
+  }
+
+  return points;
+};
 
 export const Stage1986PrepMapPage = () => {
   const dispatch = useDispatch();
@@ -120,21 +144,18 @@ export const Stage1986PrepMapPage = () => {
   const [activeMarkerId, setActiveMarkerId] = useState("");
   const [isAnimating, setIsAnimating] = useState(false);
 
-  const targetIds = useMemo(
-    () =>
-      new Set(
-        STAGE_1986_PREP_LOCATIONS.filter((location) => location.target).map(
-          (location) => location.id,
-        ),
-      ),
+  const targetSequence = useMemo(
+    () => STAGE_1986_PREP_LOCATIONS.filter((location) => location.target),
     [],
   );
-
   const pickedCount = pickedIds.size;
   const hasUvInBag = Boolean(inventory.uvLight);
   const hasNotebookInBag = Boolean(inventory.fieldNotebook);
   const showContinue =
     stage1986PrepCompleted || hasNotebookInBag || isRevealDone;
+  const currentQuestion = showContinue
+    ? null
+    : (targetSequence[pickedIds.size] ?? null);
 
   const playFailureFeedback = () => {
     const shellNode = shellRef.current;
@@ -169,6 +190,154 @@ export const Stage1986PrepMapPage = () => {
         repeat: 1,
         yoyo: true,
       },
+    );
+  };
+
+  const playCorrectMarkerEffect = (markerPoint) => {
+    const mapNode = mapRef.current;
+
+    if (!mapNode) {
+      return;
+    }
+
+    const mapRect = mapNode.getBoundingClientRect();
+    const startX = mapRect.left + Number(markerPoint?.x ?? mapRect.width * 0.5);
+    const startY = mapRect.top + Number(markerPoint?.y ?? mapRect.height * 0.5);
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+
+    const flyNode = document.createElement("div");
+    flyNode.className = "stage1986-prep__magnifierFly";
+
+    const burstNode = document.createElement("div");
+    burstNode.className = "stage1986-prep__magnifierBurst";
+
+    const burstPoints = createBurstPoints();
+    const shardNodes = burstPoints.map(() => {
+      const shard = document.createElement("span");
+      burstNode.appendChild(shard);
+      return shard;
+    });
+
+    document.body.appendChild(flyNode);
+    document.body.appendChild(burstNode);
+
+    gsap.set(flyNode, {
+      x: startX,
+      y: startY,
+      scale: 0.36,
+      opacity: 0,
+      rotate: -24,
+    });
+
+    gsap.set(burstNode, {
+      x: centerX,
+      y: centerY,
+      scale: 0.12,
+      opacity: 0,
+    });
+
+    gsap.set(shardNodes, {
+      x: 0,
+      y: 0,
+      scale: 0,
+      opacity: 0,
+    });
+
+    const timeline = gsap.timeline({
+      onComplete: () => {
+        flyNode.remove();
+        burstNode.remove();
+      },
+    });
+
+    timeline.to(flyNode, {
+      opacity: 1,
+      scale: 1,
+      rotate: 10,
+      duration: 0.16,
+      ease: "back.out(1.8)",
+    });
+
+    timeline.to(
+      flyNode,
+      {
+        x: centerX,
+        y: centerY,
+        duration: 0.52,
+        ease: "power3.out",
+      },
+      ">-0.04",
+    );
+
+    timeline.to(
+      flyNode,
+      {
+        rotate: 0,
+        scale: 1.2,
+        duration: 0.12,
+        ease: "power2.out",
+      },
+      ">-0.03",
+    );
+
+    timeline.to(
+      burstNode,
+      {
+        opacity: 1,
+        scale: 1,
+        duration: 0.08,
+        ease: "power2.out",
+      },
+      "<",
+    );
+
+    timeline.to(
+      shardNodes,
+      {
+        x: (index) => burstPoints[index]?.x ?? 0,
+        y: (index) => burstPoints[index]?.y ?? 0,
+        scale: (index) => (index % 3 === 0 ? 1.3 : 0.95),
+        opacity: 1,
+        duration: 0.1,
+        ease: "power2.out",
+        stagger: 0.01,
+      },
+      "<",
+    );
+
+    timeline.to(
+      shardNodes,
+      {
+        x: (index) => (burstPoints[index]?.x ?? 0) * 1.5,
+        y: (index) => (burstPoints[index]?.y ?? 0) * 1.5,
+        scale: 0.12,
+        opacity: 0,
+        duration: 0.28,
+        ease: "power2.in",
+        stagger: 0.012,
+      },
+      ">-0.01",
+    );
+
+    timeline.to(
+      flyNode,
+      {
+        scale: 0.14,
+        opacity: 0,
+        duration: 0.16,
+        ease: "power2.in",
+      },
+      "<",
+    );
+
+    timeline.to(
+      burstNode,
+      {
+        opacity: 0,
+        duration: 0.08,
+      },
+      ">-0.1",
     );
   };
 
@@ -326,16 +495,20 @@ export const Stage1986PrepMapPage = () => {
     );
   };
 
-  const handlePickLocation = (location) => {
+  const handlePickLocation = (location, event) => {
     if (showContinue || pickedIds.has(location.id) || isAnimating) {
       return;
     }
 
-    if (!targetIds.has(location.id)) {
+    if (!currentQuestion || location.id !== currentQuestion.id) {
       setActiveMarkerId("");
       setPickedIds(new Set());
       setStatusKind("error");
-      setStatusMessage(failLabel);
+      setStatusMessage(
+        currentQuestion
+          ? `${failLabel} Câu hiện tại yêu cầu địa điểm: ${currentQuestion.quizPrompt}`
+          : failLabel,
+      );
       playFailureFeedback();
       setIsErrorModalOpen(true);
       return;
@@ -354,6 +527,7 @@ export const Stage1986PrepMapPage = () => {
       nextPicked.size >= STAGE_1986_PREP_UV_RELEASE_COUNT &&
       nextPicked.size < STAGE_1986_PREP_TARGET_TOTAL
     ) {
+      playCorrectMarkerEffect(event?.containerPoint);
       playItemReveal({
         itemKey: "uvLight",
         statusText: uvRevealLabel,
@@ -377,7 +551,9 @@ export const Stage1986PrepMapPage = () => {
 
     setStatusKind("progress");
     setStatusMessage(
-      `Đúng tọa độ. Tiếp tục: ${nextPicked.size}/${STAGE_1986_PREP_TARGET_TOTAL} địa điểm.`,
+      nextPicked.size < STAGE_1986_PREP_TARGET_TOTAL
+        ? `Đúng tọa độ. Chuyển sang câu tiếp theo (${nextPicked.size}/${STAGE_1986_PREP_TARGET_TOTAL}).`
+        : "Đúng tọa độ cuối cùng. Đang hoàn tất cấp phát công cụ...",
     );
   };
 
@@ -389,7 +565,7 @@ export const Stage1986PrepMapPage = () => {
     setPickedIds(new Set());
     setStatusKind("idle");
     setStatusMessage(
-      "Vòng dò tìm đã làm mới. Hãy đối chiếu lại hồ sơ và chọn lại từ đầu.",
+      "Vòng dò tìm đã làm mới. Trả lời lại từ Câu 1 rồi chọn điểm tương ứng trên bản đồ.",
     );
   };
 
@@ -435,10 +611,20 @@ export const Stage1986PrepMapPage = () => {
             <p className="stage1986-prep__intelLabel">Intel Brief</p>
             <h3>Dữ liệu địa điểm đã bị rút tên riêng</h3>
             <span>
-              Chỉ còn marker nghi vấn trên bản đồ. Dựa vào kiến thức từ các ải
-              trước để xác thực từng điểm.
+              Hệ thống sẽ đưa từng câu hỏi địa danh. Trả lời câu hỏi bằng cách
+              bấm đúng một marker tương ứng trên bản đồ.
             </span>
           </div>
+
+          {!showContinue && currentQuestion && (
+            <div className="stage1986-prep__intelCard">
+              <p className="stage1986-prep__intelLabel">Câu hỏi hiện tại</p>
+              <h3>
+                {pickedCount + 1}/{STAGE_1986_PREP_TARGET_TOTAL}
+              </h3>
+              <span>{currentQuestion.quizPrompt}</span>
+            </div>
+          )}
 
           <div
             className={`stage1986-prep__status stage1986-prep__status--${statusKind}`}
@@ -529,21 +715,50 @@ export const Stage1986PrepMapPage = () => {
                     ]}
                     {...markerStyle}
                     eventHandlers={{
-                      click: () => handlePickLocation(location),
+                      click: (event) => handlePickLocation(location, event),
                     }}
                   >
-                    <Tooltip
-                      direction={getTooltipDirection(location.coordinates.lat)}
-                      offset={[0, 10]}
-                      opacity={0.96}
-                    >
-                      <div className="stage1986-prep__tooltip">
-                        <strong>{tooltipText.title}</strong>
-                        <span>{tooltipText.body}</span>
-                        <small>{tooltipText.meta}</small>
-                      </div>
-                    </Tooltip>
+                    {!isPicked && (
+                      <Tooltip
+                        direction={getTooltipDirection(
+                          location.coordinates.lat,
+                        )}
+                        offset={[0, 10]}
+                        opacity={0.96}
+                      >
+                        <div className="stage1986-prep__tooltip">
+                          <strong>{tooltipText.title}</strong>
+                          <span>{tooltipText.body}</span>
+                          <small>{tooltipText.meta}</small>
+                        </div>
+                      </Tooltip>
+                    )}
                   </CircleMarker>
+
+                  {isPicked && (
+                    <CircleMarker
+                      center={[
+                        location.coordinates.lat,
+                        location.coordinates.lng,
+                      ]}
+                      {...pickedHoverTargetVisual}
+                    >
+                      <Tooltip
+                        direction={getTooltipDirection(
+                          location.coordinates.lat,
+                        )}
+                        offset={[0, 12]}
+                        opacity={0.96}
+                        sticky
+                      >
+                        <div className="stage1986-prep__tooltip">
+                          <strong>{tooltipText.title}</strong>
+                          <span>{tooltipText.body}</span>
+                          <small>{tooltipText.meta}</small>
+                        </div>
+                      </Tooltip>
+                    </CircleMarker>
+                  )}
                 </Fragment>
               );
             })}
@@ -555,7 +770,7 @@ export const Stage1986PrepMapPage = () => {
             Bản đồ truy vết địa điểm
           </p>
           <p className="stage1986-prep__mapHint">
-            Chỉ chọn các marker xuất hiện trong hồ sơ lịch sử qua các ải trước.
+            Đọc câu hỏi bên trái rồi chọn đúng một marker trả lời cho câu đó.
           </p>
 
           <div className="stage1986-prep__particles" aria-hidden>

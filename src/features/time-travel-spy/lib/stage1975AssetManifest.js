@@ -336,15 +336,15 @@ export const STAGE_STORY_UI_ASSETS = {
     pattern: patternGridPaperSrc,
     progressFill: progressGreenSrc,
     progressBorder: progressWhiteBorderSrc,
-    headlineClassName: "text-[#2d1f12]",
-    bodyClassName: "text-[#4b3720]",
-    eyebrowClassName: "text-[#7a5a32]",
-    badgeClassName: "bg-[#7e5832] text-[#f6ead0] border-[#b88b54]/65",
+    headlineClassName: "text-[#2a1a0c]",
+    bodyClassName: "text-[#3f2b17]",
+    eyebrowClassName: "text-[#624528]",
+    badgeClassName: "bg-[#7e5832] text-[#fff3dd] border-[#b88b54]/70",
     shellClassName:
-      "border-[#5a3c1f]/55 bg-[linear-gradient(180deg,rgba(106,72,37,0.98),rgba(56,34,18,0.96))]",
+      "border-[#8c6332]/60 bg-[linear-gradient(180deg,rgba(170,124,73,0.98),rgba(122,84,45,0.96))]",
     innerPanelClassName:
-      "border-[#c79b5b]/32 bg-[linear-gradient(180deg,rgba(251,232,199,0.1),rgba(62,33,15,0.12))]",
-    patternOpacityClassName: "opacity-[0.09]",
+      "border-[#dbb67b]/40 bg-[linear-gradient(180deg,rgba(255,241,214,0.72),rgba(237,206,155,0.58))]",
+    patternOpacityClassName: "opacity-[0.07]",
   },
   frontier: {
     panel: panelGreyGreenSrc,

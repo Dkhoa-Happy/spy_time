@@ -27,6 +27,9 @@ const sanitizeGameState = (value) => {
     uniqueCompletedStages.length > 0
       ? Math.min(VALID_STAGE_IDS.length, Math.max(...uniqueCompletedStages) + 1)
       : 1;
+
+  const stage3PrepCompleted = value.stage3PrepCompleted === true;
+  const uvHuntEnabled = value.uvHuntEnabled === true;
   const hasInventory = value.inventory && typeof value.inventory === "object";
   const missionCompleted =
     value.missionCompleted === true || uniqueCompletedStages.includes(4);
@@ -37,6 +40,16 @@ const sanitizeGameState = (value) => {
     fieldNotebook: Boolean(
       hasInventory ? value.inventory.fieldNotebook : false,
     ),
+    keywords: {
+      khoiNguon: Boolean(
+        hasInventory ? value.inventory?.keywords?.khoiNguon : false,
+      ),
+      docLap: Boolean(hasInventory ? value.inventory?.keywords?.docLap : false),
+      thongNhat: Boolean(
+        hasInventory ? value.inventory?.keywords?.thongNhat : false,
+      ),
+      doiMoi: Boolean(hasInventory ? value.inventory?.keywords?.doiMoi : false),
+    },
   };
 
   if (stage1986PrepCompleted) {
@@ -48,7 +61,7 @@ const sanitizeGameState = (value) => {
     ? Math.max(unlockedStage, inferredUnlockedStage)
     : inferredUnlockedStage;
 
-  if (stage1986PrepCompleted) {
+  if (stage1986PrepCompleted || stage3PrepCompleted) {
     normalizedUnlockedStage = Math.max(normalizedUnlockedStage, 4);
   }
 
@@ -57,6 +70,8 @@ const sanitizeGameState = (value) => {
     completedStages: uniqueCompletedStages,
     missionCompleted,
     stage1986PrepCompleted,
+    stage3PrepCompleted,
+    uvHuntEnabled,
     inventory,
   };
 };
@@ -107,9 +122,17 @@ const sanitizeLegacyGameState = (value) => {
     completedStages: uniqueCompletedStages,
     missionCompleted: false,
     stage1986PrepCompleted: false,
+    stage3PrepCompleted: false,
+    uvHuntEnabled: false,
     inventory: {
       uvLight: false,
       fieldNotebook: false,
+      keywords: {
+        khoiNguon: false,
+        docLap: false,
+        thongNhat: false,
+        doiMoi: false,
+      },
     },
   };
 };

@@ -39,12 +39,33 @@ const STAGE_PAGE_CONFIG = {
   },
 };
 
+const getSuccessMessage = () =>
+  "Xác nhận thành công. Đang mở khóa phòng tiếp theo...";
+
 export const TimeTravelSpyPage = ({ activeStage }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const gameState = useSelector((state) => state.app.game);
   const unlockedStage = gameState?.unlockedStage ?? 1;
-  const activeStageConfig = STAGE_PAGE_CONFIG[activeStage] ?? STAGE_PAGE_CONFIG[4];
+  const activeStageConfig =
+    STAGE_PAGE_CONFIG[activeStage] ?? STAGE_PAGE_CONFIG[4];
+  const stage3PrepCompleted = Boolean(gameState?.stage3PrepCompleted);
+  const inventory = gameState?.inventory ?? {
+    uvLight: false,
+    fieldNotebook: false,
+    keywords: {
+      khoiNguon: false,
+      docLap: false,
+      thongNhat: false,
+      doiMoi: false,
+    },
+  };
+  const keywordBag = inventory.keywords ?? {
+    khoiNguon: false,
+    docLap: false,
+    thongNhat: false,
+    doiMoi: false,
+  };
 
   const [answers, setAnswers] = useState({
     1: "",
@@ -99,7 +120,7 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
     dispatch(completeStage(stage));
     setNotification({
       kind: "success",
-      message: "Xác nhận thành công. Đang mở khóa phòng tiếp theo...",
+      message: getSuccessMessage(),
     });
 
     window.setTimeout(() => {
@@ -122,6 +143,7 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
   const renderRoom1945 = activeStage === 2;
   const renderRoom1975 = activeStage === 3;
   const renderRoom1986 = activeStage === 4;
+  const renderRoom1930 = activeStage === 1;
   const canAccessStage1986Tools = isStage1986ToolsetReady(gameState);
   const showPageHeader = !(renderRoom1945 || renderRoom1975);
 
@@ -165,6 +187,79 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
           {notification.message}
         </p>
       )}
+
+      <article className="rounded-xl border border-border bg-surface p-5">
+        <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          Túi đồ từ khóa UV
+        </p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-lg border border-border/70 bg-background/60 px-3 py-2">
+            <p className="text-[0.68rem] uppercase tracking-[0.14em] text-muted-foreground">
+              Stage 1
+            </p>
+            <p className="mt-1 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-foreground">
+              {keywordBag.khoiNguon ? "KHỞI NGUỒN / TỔ CHỨC" : "Chưa thu thập"}
+            </p>
+          </div>
+          <div className="rounded-lg border border-border/70 bg-background/60 px-3 py-2">
+            <p className="text-[0.68rem] uppercase tracking-[0.14em] text-muted-foreground">
+              Stage 2
+            </p>
+            <p className="mt-1 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-foreground">
+              {keywordBag.docLap ? "ĐỘC LẬP" : "Chưa thu thập"}
+            </p>
+          </div>
+          <div className="rounded-lg border border-border/70 bg-background/60 px-3 py-2">
+            <p className="text-[0.68rem] uppercase tracking-[0.14em] text-muted-foreground">
+              Stage 3
+            </p>
+            <p className="mt-1 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-foreground">
+              {keywordBag.thongNhat ? "THỐNG NHẤT" : "Chưa thu thập"}
+            </p>
+          </div>
+          <div className="rounded-lg border border-border/70 bg-background/60 px-3 py-2">
+            <p className="text-[0.68rem] uppercase tracking-[0.14em] text-muted-foreground">
+              Stage 4
+            </p>
+            <p className="mt-1 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-foreground">
+              {keywordBag.doiMoi ? "ĐỔI MỚI" : "Chưa thu thập"}
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <article className={renderRoom1930 ? "space-y-4" : "hidden"}>
+        <div className="rounded-xl border border-border bg-surface p-6">
+          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            Puzzle Area
+          </p>
+          <p className="mt-3 text-sm text-foreground/90">
+            Hồ sơ mật năm 1930 đã bị mã hóa bằng một con số lịch sử trùng với
+            năm sự kiện. Hãy nhập mật khẩu để mở cửa.
+          </p>
+        </div>
+
+        <form
+          className="grid gap-3 rounded-xl border border-border bg-surface p-6"
+          onSubmit={(event) => handleSubmit(event, 1)}
+        >
+          <label
+            className="text-xs uppercase tracking-[0.2em] text-muted-foreground"
+            htmlFor="room-1-password"
+          >
+            Password
+          </label>
+          <input
+            id="room-1-password"
+            className="h-11 rounded-md border border-border bg-background px-3 text-sm text-foreground outline-none transition focus:border-brand"
+            value={answers[1]}
+            onChange={(event) => updateAnswer(1, event.target.value)}
+            placeholder="Nhập mật khẩu phòng 1930"
+            autoComplete="off"
+          />
+          <Button type="submit">Xác nhận phòng 1930</Button>
+        </form>
+      </article>
 
       <article className={renderRoom1945 ? "space-y-4" : "hidden"}>
         <Stage1945MemoryRoom

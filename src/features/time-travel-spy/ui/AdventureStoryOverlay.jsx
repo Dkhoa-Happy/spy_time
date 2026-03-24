@@ -53,10 +53,11 @@ export const AdventureStoryOverlay = ({
   secondaryIcon,
   secondaryDisabled = false,
 }) => {
-  const uiTheme = STAGE_STORY_UI_ASSETS[theme] ?? STAGE_STORY_UI_ASSETS.parchment;
+  const uiTheme =
+    STAGE_STORY_UI_ASSETS[theme] ?? STAGE_STORY_UI_ASSETS.parchment;
 
   return (
-    <div className="fixed inset-0 z-[90] grid place-items-center bg-black/64 px-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[90] grid place-items-center bg-black/44 px-4 backdrop-blur-[2px]">
       <article
         className={cn(
           "relative w-full max-w-3xl overflow-hidden rounded-[2rem] border px-5 py-8 shadow-[0_34px_70px_rgb(0_0_0_/_0.42)] sm:px-8",

@@ -71,7 +71,7 @@ const playTone = (audioContext, durationMs) =>
     oscillator.frequency.value = 740;
     gainNode.gain.setValueAtTime(0.0001, audioContext.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(
-      0.15,
+      0.28,
       audioContext.currentTime + 0.01,
     );
     gainNode.gain.exponentialRampToValueAtTime(
