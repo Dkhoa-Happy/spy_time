@@ -47,7 +47,8 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
   const navigate = useNavigate();
   const gameState = useSelector((state) => state.app.game);
   const unlockedStage = gameState?.unlockedStage ?? 1;
-  const activeStageConfig = STAGE_PAGE_CONFIG[activeStage] ?? STAGE_PAGE_CONFIG[4];
+  const activeStageConfig =
+    STAGE_PAGE_CONFIG[activeStage] ?? STAGE_PAGE_CONFIG[4];
   const stage3PrepCompleted = Boolean(gameState?.stage3PrepCompleted);
   const inventory = gameState?.inventory ?? {
     uvLight: false,
@@ -140,6 +141,7 @@ export const TimeTravelSpyPage = ({ activeStage }) => {
   const renderRoom1945 = activeStage === 2;
   const renderRoom1975 = activeStage === 3;
   const renderRoom1986 = activeStage === 4;
+  const renderRoom1930 = activeStage === 1;
   const canAccessStage1986Tools = isStage1986ToolsetReady(gameState);
   const showPageHeader = !(renderRoom1945 || renderRoom1975);
 

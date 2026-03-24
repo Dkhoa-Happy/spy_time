@@ -28,13 +28,6 @@ const sanitizeGameState = (value) => {
       ? Math.min(VALID_STAGE_IDS.length, Math.max(...uniqueCompletedStages) + 1)
       : 1;
 
-  const normalizedUnlockedStage = [1, 2, 3].includes(unlockedStage)
-    ? Math.max(unlockedStage, inferredUnlockedStage)
-    : inferredUnlockedStage;
-
-  const missionCompleted =
-    value.missionCompleted === true || uniqueCompletedStages.includes(3);
-
   const stage3PrepCompleted = value.stage3PrepCompleted === true;
   const uvHuntEnabled = value.uvHuntEnabled === true;
   const hasInventory = value.inventory && typeof value.inventory === "object";
@@ -65,7 +58,7 @@ const sanitizeGameState = (value) => {
     ? Math.max(unlockedStage, inferredUnlockedStage)
     : inferredUnlockedStage;
 
-  if (stage1986PrepCompleted) {
+  if (stage1986PrepCompleted || stage3PrepCompleted) {
     normalizedUnlockedStage = Math.max(normalizedUnlockedStage, 4);
   }
 
@@ -126,9 +119,16 @@ const sanitizeLegacyGameState = (value) => {
     completedStages: uniqueCompletedStages,
     missionCompleted: false,
     stage1986PrepCompleted: false,
+    stage3PrepCompleted: false,
+    uvHuntEnabled: false,
     inventory: {
       uvLight: false,
       fieldNotebook: false,
+      keywords: {
+        khoiNguon: false,
+        docLap: false,
+        doiMoi: false,
+      },
     },
   };
 };

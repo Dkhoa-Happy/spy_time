@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
+import { ROUTES } from "../../shared/constants/routes";
 
 import {
   TOTAL_STAGE_COUNT,
@@ -8,22 +9,14 @@ import {
 
 export const StageGuard = ({ requiredStage, children }) => {
   const game = useSelector((state) => state.app.game);
-  const { unlockedStage, missionCompleted } = game;
+  const { unlockedStage } = game;
 
   if (requiredStage > unlockedStage) {
-    if (unlockedStage === 1) {
-      return <Navigate to={ROUTES.stage1930} replace />;
-    }
-
-    if (unlockedStage === 2) {
-      return <Navigate to={ROUTES.stage1945} replace />;
-    }
-  if (missionCompleted && requiredStage < TOTAL_STAGE_COUNT) {
     return <Navigate to={getResumeRoute(game)} replace />;
   }
 
-  if (requiredStage > unlockedStage) {
-    return <Navigate to={getResumeRoute(game)} replace />;
+  if (requiredStage < 1 || requiredStage > TOTAL_STAGE_COUNT) {
+    return <Navigate to={ROUTES.home} replace />;
   }
 
   return children;

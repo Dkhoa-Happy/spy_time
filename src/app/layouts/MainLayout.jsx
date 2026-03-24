@@ -18,11 +18,29 @@ export const MainLayout = () => {
   const location = useLocation();
   const [pointer, setPointer] = useState({ x: 0, y: 0, active: false });
   const game = useSelector((state) => state.app.game);
+  const completedStages = game.completedStages ?? [];
   const keywordBag = game.inventory?.keywords ?? {
     khoiNguon: false,
     docLap: false,
     doiMoi: false,
   };
+  const hasCompletedFirstThree =
+    [1, 2, 3].every((stage) => completedStages.includes(stage)) ||
+    (game.unlockedStage ?? 1) >= 4;
+  const isInsideRoomArea = [
+    ROUTES.stage1930,
+    ROUTES.stage1945,
+    ROUTES.stage1975,
+    ROUTES.stage1986Prep,
+    ROUTES.stage1986,
+  ].includes(location.pathname);
+
+  const quickRoomLinks = [
+    { to: ROUTES.stage1930, label: "Room 1930" },
+    { to: ROUTES.stage1945, label: "Room 1945" },
+    { to: ROUTES.stage1975, label: "Room 1975" },
+    { to: ROUTES.stage1986, label: "Room 1986" },
+  ];
 
   const UV_HUNT_CLUES = {
     [ROUTES.stage1930]: [
@@ -121,7 +139,7 @@ export const MainLayout = () => {
             <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
               Coordinator Console
             </p>
-            <h1 className="tracking-tighter text-3xl 6font-bold text-foreground">
+            <h1 className="tracking-tighter text-3xl font-bold text-foreground">
               Spy Time Control Room
             </h1>
           </div>
@@ -133,6 +151,32 @@ export const MainLayout = () => {
               Rooms
             </NavLink>
           </nav>
+
+          {hasCompletedFirstThree && isInsideRoomArea && (
+            <div className="w-full rounded-xl border border-brand/35 bg-brand/10 p-2.5">
+              <p className="px-2 pb-2 text-[0.66rem] font-semibold uppercase tracking-[0.2em] text-orange-100">
+                Chuyen phong nhanh sau khi hoan tat 3 ai
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {quickRoomLinks.map((roomLink) => (
+                  <NavLink
+                    key={roomLink.to}
+                    to={roomLink.to}
+                    className={({ isActive }) =>
+                      cn(
+                        "rounded-lg border px-3 py-2 text-[0.68rem] font-semibold uppercase tracking-[0.12em] transition",
+                        isActive
+                          ? "border-brand bg-brand text-white"
+                          : "border-border/70 bg-background/55 text-foreground hover:border-brand/50 hover:text-brand",
+                      )
+                    }
+                  >
+                    {roomLink.label}
+                  </NavLink>
+                ))}
+              </div>
+            </div>
+          )}
         </header>
 
         <main>

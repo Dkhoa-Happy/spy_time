@@ -129,7 +129,6 @@ export const Stage1986PrepMapPage = () => {
   const hasNotebookInBag = Boolean(inventory.fieldNotebook);
   const showContinue =
     stage1986PrepCompleted || hasNotebookInBag || isRevealDone;
-  const showContinue = stage3PrepCompleted || hasNotebookInBag || isRevealDone;
   const currentQuestion = showContinue
     ? null
     : (targetSequence[pickedIds.size] ?? null);

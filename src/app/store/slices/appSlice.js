@@ -1,27 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-  projectName: "Spy Time",
-  missionCounter: 0,
-  game: {
-    unlockedStage: 1,
-    completedStages: [],
-    missionCompleted: false,
-    stage1986PrepCompleted: false,
-    stage3PrepCompleted: false,
-    uvHuntEnabled: false,
-    inventory: {
-      uvLight: false,
-      fieldNotebook: false,
-      keywords: {
-        khoiNguon: false,
-        docLap: false,
-        doiMoi: false,
-      },
-    },
-  },
-};
-
 const createDefaultInventory = () => ({
   uvLight: false,
   fieldNotebook: false,
@@ -32,10 +10,32 @@ const createDefaultInventory = () => ({
   },
 });
 
+const initialState = {
+  projectName: "Spy Time",
+  missionCounter: 0,
+  game: {
+    unlockedStage: 1,
+    completedStages: [],
+    missionCompleted: false,
+    stage1986PrepCompleted: false,
+    stage3PrepCompleted: false,
+    uvHuntEnabled: false,
+    inventory: createDefaultInventory(),
+  },
+};
+
 const ensureInventoryShape = (state) => {
   if (!state.game.inventory || typeof state.game.inventory !== "object") {
     state.game.inventory = createDefaultInventory();
     return;
+  }
+
+  if (typeof state.game.inventory.uvLight !== "boolean") {
+    state.game.inventory.uvLight = false;
+  }
+
+  if (typeof state.game.inventory.fieldNotebook !== "boolean") {
+    state.game.inventory.fieldNotebook = false;
   }
 
   if (
@@ -84,20 +84,29 @@ const appSlice = createSlice({
     },
     completeStage1986Prep: (state) => {
       state.game.stage1986PrepCompleted = true;
-      if (!state.game.inventory || typeof state.game.inventory !== "object") {
-        state.game.inventory = {
-          uvLight: false,
-          fieldNotebook: false,
-        };
-      }
+      ensureInventoryShape(state);
+      state.game.inventory.uvLight = true;
+      state.game.inventory.fieldNotebook = true;
+      state.game.unlockedStage = Math.max(state.game.unlockedStage, 4);
+    },
     completeStage3Prep: (state) => {
       state.game.stage3PrepCompleted = true;
+      state.game.stage1986PrepCompleted = true;
       ensureInventoryShape(state);
       state.game.inventory.uvLight = true;
       state.game.inventory.fieldNotebook = true;
       state.game.unlockedStage = Math.max(state.game.unlockedStage, 4);
     },
     collectStage1986Item: (state, action) => {
+      const itemKey = String(action.payload || "");
+      ensureInventoryShape(state);
+
+      if (!["uvLight", "fieldNotebook"].includes(itemKey)) {
+        return;
+      }
+
+      state.game.inventory[itemKey] = true;
+    },
     setUvHuntEnabled: (state, action) => {
       state.game.uvHuntEnabled = Boolean(action.payload);
     },
@@ -131,10 +140,6 @@ const appSlice = createSlice({
         completedStages: [],
         missionCompleted: false,
         stage1986PrepCompleted: false,
-        inventory: {
-          uvLight: false,
-          fieldNotebook: false,
-        },
         stage3PrepCompleted: false,
         uvHuntEnabled: false,
         inventory: createDefaultInventory(),
