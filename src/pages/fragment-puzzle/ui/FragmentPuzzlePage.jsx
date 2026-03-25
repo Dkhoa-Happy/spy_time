@@ -103,7 +103,7 @@ const FragmentPuzzlePage = () => {
   const [fragments, setFragments] = useState([
     {
       id: 1,
-      text: "Chủ trương làm tư sản\ndân quyền cách mạng,",
+      text: "Quy luật ra đời\nvà phát triển",
       initialPos: { x: 60, y: 70 },
       currentPos: { x: 60, y: 70 },
       rotation: -15,
@@ -112,7 +112,7 @@ const FragmentPuzzlePage = () => {
     },
     {
       id: 2,
-      text: "và thổ địa cách mạng,\nđể xây dựng",
+      text: "của Đảng là sự\nkết hợp",
       initialPos: { x: 620, y: 90 },
       currentPos: { x: 620, y: 90 },
       rotation: 5,
@@ -121,7 +121,7 @@ const FragmentPuzzlePage = () => {
     },
     {
       id: 3,
-      text: "đảng thống nhất,\nhướng tới",
+      text: "chủ nghĩa Mác - Lênin\nvới phong trào",
       initialPos: { x: 90, y: 470 },
       currentPos: { x: 90, y: 470 },
       rotation: 12,
@@ -130,7 +130,7 @@ const FragmentPuzzlePage = () => {
     },
     {
       id: 4,
-      text: "xã hội cộng sản toàn cầu,\nđộc lập",
+      text: "công nhân và\nphong trào",
       initialPos: { x: 620, y: 470 },
       currentPos: { x: 620, y: 470 },
       rotation: -8,
@@ -139,7 +139,7 @@ const FragmentPuzzlePage = () => {
     },
     {
       id: 5,
-      text: "tự do thịnh vượng.",
+      text: "yêu nước Việt Nam.",
       initialPos: { x: 340, y: 40 },
       currentPos: { x: 340, y: 40 },
       rotation: 10,
@@ -217,7 +217,8 @@ const FragmentPuzzlePage = () => {
   const [canvasWidth, setCanvasWidth] = useState(980);
   const SNAP_DISTANCE = 95;
   const resumeRoute = getResumeRoute(game);
-  const canReturnToCurrentStage = game.unlockedStage > 1 || game.missionCompleted;
+  const canReturnToCurrentStage =
+    game.unlockedStage > 1 || game.missionCompleted;
 
   useEffect(() => {
     const handleResize = () => {
